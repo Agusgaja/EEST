@@ -12,7 +12,7 @@ import { useMemo, useState } from "react";
 import DetailField from "./DetailField.jsx";
 import HistoryTimeline from "./HistoryTimeline.jsx";
 import StatusBadge from "./StatusBadge.jsx";
-import { buildHistoryEntry, getStatus } from "../utils/ticketUtils.js";
+import { formatDate, getShortDescription, getStatus } from "../utils/ticketUtils.js";
 
 export default function TicketDetailPanel({
   ticket,
@@ -28,49 +28,45 @@ export default function TicketDetailPanel({
   const statusChanged = draftStatus !== ticket.status;
   const selectedStatus = useMemo(() => getStatus(statuses, draftStatus), [draftStatus, statuses]);
 
+  // Compatibilidad: el ticket puede tener userSnapshot (nuevo schema) o user/sector (legacy)
+  const displayName   = ticket.userSnapshot?.name   ?? ticket.user   ?? "—";
+  const displaySector = ticket.userSnapshot?.sector ?? ticket.sector  ?? "—";
+  const displayLegajo = ticket.userSnapshot?.legajo ?? "—";
+
   function handleStatusSubmit(event) {
     event.preventDefault();
     if (!statusChanged) return;
-    onUpdateStatus(
-      ticket.id,
-      draftStatus,
-      buildHistoryEntry({
-        action: "Estado actualizado",
-        detail: `Cambio de ${currentStatus.label} a ${selectedStatus.label}.`,
-      }),
-    );
+    // El actor real se pasa desde AdminTickets — aquí solo notificamos el nuevo estado.
+    onUpdateStatus(ticket.id, draftStatus);
   }
 
   function handleObservationSubmit(event) {
     event.preventDefault();
     const trimmed = observation.trim();
     if (!trimmed) return;
-    onAddObservation(ticket.id, {
-      id: `obs-${Date.now()}`,
-      author: "Mantenimiento",
-      text: trimmed,
-      date: new Intl.DateTimeFormat("es-AR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date()),
-    });
+    // El actor real se pasa desde AdminTickets — aquí solo enviamos el texto.
+    onAddObservation(ticket.id, trimmed);
     setObservation("");
   }
 
   function handleClose() {
     setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    setTimeout(() => onClose(), 300);
   }
 
   return (
-    <aside className={`fixed inset-0 z-30 flex justify-end bg-black/40 px-0 backdrop-blur-sm sm:px-4 ${isClosing ? 'animate-fade-out-overlay' : 'animate-fade-overlay'}`}>
-      <div className={`glass-panel flex h-full w-full max-w-2xl flex-col overflow-hidden sm:my-4 sm:h-[calc(100vh-2rem)] sm:rounded-xl ${isClosing ? 'animate-slide-out-right' : 'animate-slide-in-right'}`}>
-        <div className="flex min-h-16 items-center justify-between gap-4 border-b border-slate-200/80 px-5 dark:border-white/[0.08]">
+    <aside
+      className={`fixed inset-0 z-30 flex justify-end bg-black/40 px-0 backdrop-blur-sm sm:px-4 ${
+        isClosing ? "animate-fade-out-overlay" : "animate-fade-overlay"
+      }`}
+    >
+      <div
+        className={`glass-panel flex h-full w-full max-w-2xl flex-col overflow-hidden sm:my-4 sm:h-[calc(100vh-2rem)] sm:rounded-xl ${
+          isClosing ? "animate-slide-out-right" : "animate-slide-in-right"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between gap-4 border-b border-slate-200/80 px-6 py-5 dark:border-white/[0.08]">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
@@ -79,7 +75,7 @@ export default function TicketDetailPanel({
               <StatusBadge status={currentStatus} />
             </div>
             <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
-              {ticket.shortDescription}
+              {getShortDescription(ticket.fullDescription)}
             </p>
           </div>
           <button
@@ -94,37 +90,39 @@ export default function TicketDetailPanel({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
+          {/* Info del ticket */}
           <section className="space-y-4">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
-              Informacion del ticket
+              Información del ticket
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
-              <IconField icon={UserRound} label="Usuario" value={ticket.user} />
-              <IconField icon={Building2} label="Sector" value={ticket.sector} />
-              <IconField icon={Wrench} label="Categoria" value={ticket.category} />
-              <IconField icon={CheckCircle2} label="Subcategoria" value={ticket.subcategory} />
-              <IconField icon={Tag} label="Etiqueta del dispositivo" value={ticket.deviceTag} />
-              <IconField icon={CalendarDays} label="Fecha" value={ticket.date} />
+              <IconField icon={UserRound} label="Usuario" value={displayName} />
+              <IconField icon={Building2} label="Sector" value={displaySector} />
+              <IconField icon={Tag} label="Legajo" value={displayLegajo} />
+              <IconField icon={CalendarDays} label="Fecha" value={formatDate(ticket.createdAt)} />
+              <IconField icon={Wrench} label="Categoría" value={ticket.category} />
+              <IconField icon={CheckCircle2} label="Subcategoría" value={ticket.subcategory} />
+              {ticket.deviceTag && (
+                <IconField icon={Tag} label="Etiqueta del equipo" value={ticket.deviceTag} />
+              )}
             </dl>
-            <DetailField label="Descripcion completa" value={ticket.fullDescription} />
+            <DetailField label="Descripción completa" value={ticket.fullDescription} />
           </section>
 
+          {/* Gestión */}
           <section className="mt-8 space-y-4">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">Gestion</h3>
-            <form
-              className="glass-card grid gap-3 rounded-xl p-4"
-              onSubmit={handleStatusSubmit}
-            >
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">Gestión</h3>
+            <form className="glass-card grid gap-3 rounded-xl p-4" onSubmit={handleStatusSubmit}>
               <label className="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                 Estado
                 <select
                   className="min-h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 transition-colors focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:focus:border-violet-500/50"
                   value={draftStatus}
-                  onChange={(event) => setDraftStatus(event.target.value)}
+                  onChange={(e) => setDraftStatus(e.target.value)}
                 >
-                  {statuses.map((status) => (
-                    <option className="dark:bg-slate-900 dark:text-slate-100" key={status.id} value={status.id}>
-                      {status.label}
+                  {statuses.map((s) => (
+                    <option className="dark:bg-slate-900 dark:text-slate-100" key={s.id} value={s.id}>
+                      {s.label}
                     </option>
                   ))}
                 </select>
@@ -144,9 +142,9 @@ export default function TicketDetailPanel({
                 Observaciones
                 <textarea
                   className="min-h-28 resize-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-colors focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
-                  placeholder="Agregar una observacion interna"
+                  placeholder="Agregar una observación interna"
                   value={observation}
-                  onChange={(event) => setObservation(event.target.value)}
+                  onChange={(e) => setObservation(e.target.value)}
                 />
               </label>
               <button
@@ -154,11 +152,12 @@ export default function TicketDetailPanel({
                 type="submit"
               >
                 <Send size={17} aria-hidden="true" />
-                Agregar observacion
+                Agregar observación
               </button>
             </form>
           </section>
 
+          {/* Observaciones registradas */}
           <section className="mt-8 space-y-4">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
               Observaciones registradas
@@ -166,16 +165,13 @@ export default function TicketDetailPanel({
             {ticket.observations.length > 0 ? (
               <div className="grid gap-3">
                 {ticket.observations.map((item) => (
-                  <article
-                    className="glass-card rounded-xl p-4"
-                    key={item.id}
-                  >
+                  <article className="glass-card rounded-xl p-4" key={item.id}>
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                       <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                         {item.author}
                       </p>
                       <time className="text-xs text-slate-500 dark:text-slate-400">
-                        {item.date}
+                        {formatDate(item.createdAt ?? item.date)}
                       </time>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
@@ -191,6 +187,7 @@ export default function TicketDetailPanel({
             )}
           </section>
 
+          {/* Historial */}
           <section className="mt-8 space-y-4 pb-4">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">Historial</h3>
             <HistoryTimeline history={ticket.history} />

@@ -6,20 +6,23 @@ import { useTickets } from "../context/TicketContext.jsx";
 export default function DashboardHome() {
   const { user } = useAuth();
   const { tickets } = useTickets();
-  const myTickets = tickets.filter(
-    (t) => `${user.nombre} ${user.apellido}` === t.user,
+  // Filtro por userId (seguro). Fallback por nombre para compatibilidad con datos legacy.
+  const myTickets = tickets.filter((t) =>
+    t.userId ? t.userId === user.id : `${user.nombre} ${user.apellido}` === t.user,
   );
   const openTickets = myTickets.filter((t) => t.status === "abierto");
   const resolvedTickets = myTickets.filter((t) => t.status === "resuelto");
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-        Inicio
-      </h1>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Resumen de su actividad en el sistema de mantenimiento.
-      </p>
+    <div className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="min-w-0">
+        <h1 className="truncate text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          Inicio
+        </h1>
+        <p className="truncate mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Resumen de su actividad en el sistema de mantenimiento.
+        </p>
+      </div>
 
       {/* Stat cards */}
       <div className="mt-6 grid gap-4 sm:grid-cols-3">

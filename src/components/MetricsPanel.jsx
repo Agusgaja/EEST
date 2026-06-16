@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { diffMinutes, formatDate } from "../utils/ticketUtils.js";
 
 const STATUS_COLORS = {
   abierto: "#3b82f6",
@@ -40,32 +41,27 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
 
   const totalTickets = tickets.length;
 
+  // Usa createdAt (ISO 8601) y closedAt para calcular el tiempo real de resolución.
+  // Compatible con Chrome, Safari y Firefox.
   const averageResolutionTime = useMemo(() => {
-    const resolvedTickets = tickets.filter((t) => t.status === "resuelto");
+    const resolvedTickets = tickets.filter((t) => t.status === "resuelto" && t.closedAt);
     if (resolvedTickets.length === 0) return null;
 
     const times = resolvedTickets
-      .map((ticket) => {
-        const created = ticket.history.find((h) => h.action === "Ticket creado");
-        const resolved = ticket.history.find(
-          (h) => h.action === "Estado actualizado" && h.detail?.includes("Resuelto"),
-        );
-        if (!created || !resolved) return null;
-        const diff = new Date(resolved.date) - new Date(created.date);
-        return diff / (1000 * 60);
-      })
-      .filter(Boolean);
+      .map((t) => diffMinutes(t.createdAt, t.closedAt))
+      .filter((m) => m !== null && m >= 0);
 
     if (times.length === 0) return null;
     return times.reduce((a, b) => a + b, 0) / times.length;
   }, [tickets]);
 
+  // Usa createdAt (ISO 8601) — split por "T" es robusto en todos los browsers.
   const trendsData = useMemo(() => {
     const byDay = {};
     tickets.forEach((t) => {
-      const day = t.date.split(" ")[0];
-      if (!byDay[day]) byDay[day] = 0;
-      byDay[day]++;
+      const day = (t.createdAt ?? "").split("T")[0];
+      if (!day) return;
+      byDay[day] = (byDay[day] ?? 0) + 1;
     });
     return Object.entries(byDay)
       .sort(([a], [b]) => a.localeCompare(b))
@@ -74,6 +70,8 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
         return { day: `${parts[2]}/${parts[1]}`, tickets: count };
       });
   }, [tickets]);
+
+  const resolvedCount = tickets.filter((t) => t.status === "resuelto").length;
 
   const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload?.length) return null;
@@ -91,18 +89,14 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
   return (
     <aside className="animate-fade-overlay fixed inset-0 z-30 flex justify-end bg-black/40 px-0 backdrop-blur-sm sm:px-4">
       <div className="glass-panel animate-slide-in-right flex h-full w-full max-w-2xl flex-col overflow-hidden sm:my-4 sm:h-[calc(100vh-2rem)] sm:rounded-xl">
-        <div className="flex min-h-16 items-center justify-between gap-4 border-b border-slate-200/80 px-5 dark:border-white/[0.08]">
+        <div className="flex items-center justify-between gap-4 border-b border-slate-200/80 px-6 py-5 dark:border-white/[0.08]">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/10 text-violet-500 dark:bg-violet-500/20 dark:text-violet-400">
               <TrendingUp size={18} aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
-                Métricas
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Panel analítico de tickets
-              </p>
+              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">Métricas</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Panel analítico de tickets</p>
             </div>
           </div>
           <button
@@ -118,6 +112,7 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
           <div className="grid gap-6">
+            {/* Distribución por estado */}
             <section className="space-y-4">
               <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
                 Distribución por estado
@@ -153,7 +148,8 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
                         <strong className="text-slate-900 dark:text-slate-100">
                           {entry.value}
                         </strong>{" "}
-                        ({totalTickets > 0
+                        (
+                        {totalTickets > 0
                           ? ((entry.value / totalTickets) * 100).toFixed(0)
                           : 0}
                         %)
@@ -164,6 +160,7 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
               </div>
             </section>
 
+            {/* Tiempo promedio de resolución */}
             <section className="space-y-4">
               <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
                 Tiempo promedio de resolución
@@ -177,13 +174,14 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
                     {formatDuration(averageResolutionTime)}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Promedio entre creación y resolución (
-                    {tickets.filter((t) => t.status === "resuelto").length} tickets resueltos)
+                    Promedio entre creación y resolución ({resolvedCount} ticket
+                    {resolvedCount !== 1 ? "s" : ""} resuelto{resolvedCount !== 1 ? "s" : ""})
                   </p>
                 </div>
               </div>
             </section>
 
+            {/* Tendencias */}
             <section className="space-y-4">
               <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
                 Tendencias
@@ -194,11 +192,7 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
               <div className="glass-card rounded-xl p-4">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={trendsData}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="#94a3b8"
-                      strokeOpacity={0.15}
-                    />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" strokeOpacity={0.15} />
                     <XAxis
                       dataKey="day"
                       tick={{ fontSize: 12, fill: "#94a3b8" }}

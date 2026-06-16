@@ -13,30 +13,34 @@ import { useTickets } from "../context/TicketContext.jsx";
 import DetailField from "../components/DetailField.jsx";
 import HistoryTimeline from "../components/HistoryTimeline.jsx";
 import StatusBadge from "../components/StatusBadge.jsx";
-import { statuses } from "../data/mockTickets.js";
-import { getStatus } from "../utils/ticketUtils.js";
+import { TICKET_STATUSES } from "../config/ticketStatuses.js";
+import { formatDate, getShortDescription, getStatus } from "../utils/ticketUtils.js";
 
 export default function MyTicketsPage() {
   const { user } = useAuth();
   const { tickets } = useTickets();
   const [detailTicketId, setDetailTicketId] = useState(null);
 
-  const myTickets = tickets.filter(
-    (t) => `${user.nombre} ${user.apellido}` === t.user,
+  // Filtro por userId (referencia segura). Fallback: comparación por nombre para tickets legacy.
+  const myTickets = tickets.filter((t) =>
+    t.userId ? t.userId === user.id : `${user.nombre} ${user.apellido}` === t.user,
   );
+
   const detailTicket = detailTicketId
     ? tickets.find((t) => t.id === detailTicketId)
     : null;
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-        Mis tickets
-      </h1>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {myTickets.length} ticket{myTickets.length !== 1 ? "s" : ""} registrado
-       {myTickets.length !== 1 ? "s" : ""}
-      </p>
+    <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="min-w-0">
+        <h1 className="truncate text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          Mis tickets
+        </h1>
+        <p className="truncate mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {myTickets.length} ticket{myTickets.length !== 1 ? "s" : ""} registrado
+          {myTickets.length !== 1 ? "s" : ""}
+        </p>
+      </div>
 
       {myTickets.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white/70 p-12 text-center text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
@@ -45,7 +49,7 @@ export default function MyTicketsPage() {
       ) : (
         <div className="mt-6 grid gap-3">
           {myTickets.map((ticket) => {
-            const status = getStatus(statuses, ticket.status);
+            const status = getStatus(TICKET_STATUSES, ticket.status);
             return (
               <button
                 key={ticket.id}
@@ -60,12 +64,12 @@ export default function MyTicketsPage() {
                     <StatusBadge status={status} />
                   </div>
                   <p className="line-clamp-1 text-sm text-slate-600 dark:text-slate-300">
-                    {ticket.shortDescription}
+                    {getShortDescription(ticket.fullDescription)}
                   </p>
                   <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                     <span>{ticket.category}</span>
                     <span>&middot;</span>
-                    <span>{ticket.date}</span>
+                    <span>{formatDate(ticket.createdAt)}</span>
                   </div>
                 </div>
               </button>
@@ -84,16 +88,16 @@ export default function MyTicketsPage() {
           />
           {/* Panel */}
           <div className="animate-slide-in-right relative flex h-full w-full max-w-2xl flex-col overflow-hidden bg-white dark:border-l dark:border-white/10 dark:bg-slate-950/95 dark:backdrop-blur-xl sm:my-4 sm:h-[calc(100vh-2rem)] sm:rounded-lg">
-            <div className="flex min-h-16 items-center justify-between gap-4 border-b border-slate-200 px-5 dark:border-white/10">
+            <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-5 dark:border-white/10">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {detailTicket.id}
                   </p>
-                  <StatusBadge status={getStatus(statuses, detailTicket.status)} />
+                  <StatusBadge status={getStatus(TICKET_STATUSES, detailTicket.status)} />
                 </div>
                 <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
-                  {detailTicket.shortDescription}
+                  {getShortDescription(detailTicket.fullDescription)}
                 </p>
               </div>
               <button
@@ -108,17 +112,40 @@ export default function MyTicketsPage() {
             <div className="flex-1 overflow-y-auto px-5 py-5">
               <section className="space-y-4">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  Informacion del ticket
+                  Información del ticket
                 </h3>
                 <dl className="grid gap-4 sm:grid-cols-2">
-                  <IconField icon={UserRound} label="Usuario" value={detailTicket.user} />
-                  <IconField icon={Building2} label="Sector" value={detailTicket.sector} />
-                  <IconField icon={Wrench} label="Categoria" value={detailTicket.category} />
-                  <IconField icon={CheckCircle2} label="Subcategoria" value={detailTicket.subcategory} />
-                  <IconField icon={Tag} label="Etiqueta" value={detailTicket.deviceTag || "—"} />
-                  <IconField icon={CalendarDays} label="Fecha" value={detailTicket.date} />
+                  <IconField
+                    icon={UserRound}
+                    label="Usuario"
+                    value={detailTicket.userSnapshot?.name ?? detailTicket.user ?? "—"}
+                  />
+                  <IconField
+                    icon={Building2}
+                    label="Sector"
+                    value={detailTicket.userSnapshot?.sector ?? detailTicket.sector ?? "—"}
+                  />
+                  <IconField
+                    icon={Tag}
+                    label="Legajo"
+                    value={detailTicket.userSnapshot?.legajo ?? "—"}
+                  />
+                  <IconField
+                    icon={CalendarDays}
+                    label="Fecha"
+                    value={formatDate(detailTicket.createdAt)}
+                  />
+                  <IconField icon={Wrench} label="Categoría" value={detailTicket.category} />
+                  <IconField
+                    icon={CheckCircle2}
+                    label="Subcategoría"
+                    value={detailTicket.subcategory}
+                  />
+                  {detailTicket.deviceTag && (
+                    <IconField icon={Tag} label="Etiqueta" value={detailTicket.deviceTag} />
+                  )}
                 </dl>
-                <DetailField label="Descripcion completa" value={detailTicket.fullDescription} />
+                <DetailField label="Descripción completa" value={detailTicket.fullDescription} />
               </section>
 
               <section className="mt-8 space-y-4">
@@ -137,7 +164,7 @@ export default function MyTicketsPage() {
                             {item.author}
                           </p>
                           <time className="text-xs text-slate-500 dark:text-slate-400">
-                            {item.date}
+                            {formatDate(item.createdAt ?? item.date)}
                           </time>
                         </div>
                         <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">

@@ -2,13 +2,26 @@ import { ClipboardList } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useUsers } from "../context/UserContext.jsx";
+import { useSettings } from "../context/SettingsContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 
+const inputClass =
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50";
+
 export default function RegisterPage() {
-  const { register } = useAuth();
+  // RegisterPage usa UserContext (fuente de verdad) + AuthContext (para auto-login)
+  // SettingsContext provee los sectores activos del sistema
+  const { addUser } = useUsers();
+  const { login } = useAuth();
+  const { sectors } = useSettings();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  // Solo se ofrecen sectores activos — si el admin desactiva uno, desaparece del registro
+  const activeSectors = sectors.filter((s) => s.estado === "Activo");
+
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -19,51 +32,87 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   function setField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    // Limpia el error del campo al empezar a corregirlo
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    setError("");
+  function validate() {
+    const errs = {};
+    if (!form.nombre.trim()) errs.nombre = "El nombre es obligatorio.";
+    if (!form.apellido.trim()) errs.apellido = "El apellido es obligatorio.";
+    if (!form.legajo.trim()) errs.legajo = "El legajo es obligatorio.";
 
-    if (Object.values(form).some((v) => !v.trim())) {
-      setError("Todos los campos son obligatorios");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setError("Ingrese un email valido");
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      setError("Las contrasenas no coinciden");
-      return;
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email.trim()) errs.email = "El email es obligatorio.";
+    else if (!emailRegex.test(form.email)) errs.email = "Ingresá un email válido.";
 
-    const result = register({
-      nombre: form.nombre.trim(),
-      apellido: form.apellido.trim(),
-      legajo: form.legajo.trim(),
-      email: form.email.trim(),
-      telefono: form.telefono.trim(),
-      sector: form.sector.trim(),
-      password: form.password,
-    });
+    const phoneRegex = /^[\+\d\s\-]{8,}$/;
+    if (!form.telefono.trim()) errs.telefono = "El teléfono es obligatorio.";
+    else if (!phoneRegex.test(form.telefono)) errs.telefono = "Mín. 8 caracteres.";
 
-    if (!result.success) {
-      setError(result.error);
-      return;
+    if (!form.sector) errs.sector = "Seleccioná un sector.";
+
+    if (!form.password) errs.password = "La contraseña es obligatoria.";
+    else if (form.password.length < 8) errs.password = "Mínimo 8 caracteres.";
+
+    if (!form.confirmPassword) errs.confirmPassword = "Confirmá la contraseña.";
+    else if (form.password && form.password !== form.confirmPassword)
+      errs.confirmPassword = "Las contraseñas no coinciden.";
+
+    return errs;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setSubmitting(true);
+    try {
+      // 1. Crear usuario en UserContext (fuente de verdad)
+      // El rol siempre es "usuario" — nunca "admin" desde el registro público
+      addUser({
+        nombre: form.nombre.trim(),
+        apellido: form.apellido.trim(),
+        legajo: form.legajo.trim(),
+        email: form.email.trim(),
+        telefono: form.telefono.trim(),
+        sector: form.sector,
+        password: form.password,
+        rol: "Usuario",
+        role: "usuario",
+      });
+
+      // 2. Auto-login con las credenciales recién creadas
+      const result = login(form.legajo.trim(), form.password);
+      if (result.success) {
+        navigate("/dashboard");
+      } else {
+        // Fallback improbable: si el login falla, redirigir al login manual
+        navigate("/login");
+      }
+    } catch (err) {
+      // El addUser lanza errores con mensajes específicos (legajo/email/teléfono duplicado)
+      // Intentamos identificar cuál campo causó el error
+      const msg = err.message || "Ocurrió un error al crear la cuenta.";
+      if (msg.toLowerCase().includes("legajo")) setErrors({ legajo: msg });
+      else if (msg.toLowerCase().includes("email")) setErrors({ email: msg });
+      else if (msg.toLowerCase().includes("teléfono")) setErrors({ telefono: msg });
+      else setErrors({ _form: msg });
+    } finally {
+      setSubmitting(false);
     }
-
-    navigate("/login");
   }
 
   return (
     <div className={`${theme === "dark" ? "dark" : ""}`}>
       <div className="ambient-bg relative flex min-h-screen items-center justify-center p-4 transition-colors">
-
         <div className="relative w-full max-w-lg animate-fade-in">
           <div className="absolute right-0 top-0 -translate-y-16">
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
@@ -77,128 +126,156 @@ export default function RegisterPage() {
               Crear cuenta
             </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              Registrese para crear solicitudes de mantenimiento
+              Registrate para crear solicitudes de mantenimiento
             </p>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="glass-card rounded-xl p-6"
-          >
-            {error ? (
+          <form onSubmit={handleSubmit} className="glass-card rounded-xl p-6" noValidate>
+
+            {errors._form && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
-                {error}
+                {errors._form}
               </div>
-            ) : null}
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2">
+              {/* Nombre */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Nombre
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   value={form.nombre}
                   onChange={(e) => setField("nombre", e.target.value)}
-                  required
+                  placeholder="Ej: Juan"
                 />
+                {errors.nombre && <p className="mt-1 text-xs text-red-500">{errors.nombre}</p>}
               </div>
+
+              {/* Apellido */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Apellido
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   value={form.apellido}
                   onChange={(e) => setField("apellido", e.target.value)}
-                  required
+                  placeholder="Ej: García"
                 />
+                {errors.apellido && <p className="mt-1 text-xs text-red-500">{errors.apellido}</p>}
               </div>
+
+              {/* Legajo */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Legajo
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   value={form.legajo}
                   onChange={(e) => setField("legajo", e.target.value)}
-                  required
+                  placeholder="Ej: EMP-4200"
                 />
+                {errors.legajo && <p className="mt-1 text-xs text-red-500">{errors.legajo}</p>}
               </div>
+
+              {/* Email */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Email
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   type="email"
                   value={form.email}
                   onChange={(e) => setField("email", e.target.value)}
-                  required
+                  placeholder="nombre@industria.com"
                 />
+                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
               </div>
+
+              {/* Teléfono */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Telefono
+                  Teléfono
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   value={form.telefono}
                   onChange={(e) => setField("telefono", e.target.value)}
-                  required
+                  placeholder="+54 11 1234-5678"
                 />
+                {errors.telefono && <p className="mt-1 text-xs text-red-500">{errors.telefono}</p>}
               </div>
+
+              {/* Sector */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Sector
                 </label>
-                <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                <select
+                  className={inputClass}
                   value={form.sector}
                   onChange={(e) => setField("sector", e.target.value)}
-                  required
-                />
+                >
+                  <option value="">Seleccioná tu sector</option>
+                  {activeSectors.map((s) => (
+                    <option key={s.id} value={s.name}>{s.name}</option>
+                  ))}
+                </select>
+                {errors.sector && <p className="mt-1 text-xs text-red-500">{errors.sector}</p>}
               </div>
+
+              {/* Contraseña */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Contraseña
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   type="password"
                   value={form.password}
                   onChange={(e) => setField("password", e.target.value)}
-                  required
+                  placeholder="Mínimo 8 caracteres"
+                  autoComplete="new-password"
                 />
+                {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
               </div>
+
+              {/* Confirmar contraseña */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Confirmar contrasena
+                  Confirmar contraseña
                 </label>
                 <input
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                  className={inputClass}
                   type="password"
                   value={form.confirmPassword}
                   onChange={(e) => setField("confirmPassword", e.target.value)}
-                  required
+                  placeholder="••••••••"
+                  autoComplete="new-password"
                 />
+                {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
               </div>
             </div>
 
             <button
               type="submit"
-              className="mt-6 w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97]"
+              disabled={submitting}
+              className="mt-6 w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Registrarse
+              {submitting ? "Creando cuenta..." : "Crear cuenta"}
             </button>
 
             <p className="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
-              Ya tiene cuenta?{" "}
+              ¿Ya tenés cuenta?{" "}
               <Link
                 to="/login"
                 className="font-medium text-violet-600 underline-offset-2 transition-colors hover:underline dark:text-violet-400"
               >
-                Iniciar sesion
+                Iniciar sesión
               </Link>
             </p>
           </form>

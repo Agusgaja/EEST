@@ -1,4 +1,23 @@
+// AVISO DE SEGURIDAD: Las contraseñas en este archivo están en texto plano
+// únicamente a fines de demostración en la etapa mock.
+// En producción, TODAS las contraseñas deben ser hasheadas (ej: bcrypt)
+// antes de almacenarse. NUNCA almacenar contraseñas en texto plano en una BD real.
+
 export const mockUsers = [
+  {
+    id: "U-100",
+    nombre: "Admin",
+    apellido: "Sistema",
+    legajo: "admin",
+    email: "admin@industria.com",
+    telefono: "+54 11 4000-0000",
+    sector: "Sistemas e Infraestructura",
+    estado: "Activo",
+    rol: "Admin",
+    role: "admin",
+    password: "admin123",
+    fechaRegistro: "2020-01-01",
+  },
   {
     id: "U-101",
     nombre: "Carla",
@@ -9,6 +28,8 @@ export const mockUsers = [
     sector: "Producción",
     estado: "Activo",
     rol: "Usuario",
+    role: "usuario",
+    password: "usuario123",
     fechaRegistro: "2023-01-15",
   },
   {
@@ -21,6 +42,8 @@ export const mockUsers = [
     sector: "Logística",
     estado: "Activo",
     rol: "Usuario",
+    role: "usuario",
+    password: "usuario123",
     fechaRegistro: "2023-03-22",
   },
   {
@@ -33,6 +56,8 @@ export const mockUsers = [
     sector: "Calidad",
     estado: "Inactivo",
     rol: "Usuario",
+    role: "usuario",
+    password: "usuario123",
     fechaRegistro: "2022-11-05",
   },
   {
@@ -45,6 +70,8 @@ export const mockUsers = [
     sector: "Administración",
     estado: "Activo",
     rol: "Admin",
+    role: "admin",
+    password: "admin123",
     fechaRegistro: "2021-08-14",
   },
   {
@@ -57,6 +84,8 @@ export const mockUsers = [
     sector: "Producción",
     estado: "Activo",
     rol: "Usuario",
+    role: "usuario",
+    password: "usuario123",
     fechaRegistro: "2023-06-10",
   },
 ];

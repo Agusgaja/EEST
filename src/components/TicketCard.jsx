@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { forwardRef } from "react";
 import StatusBadge from "./StatusBadge.jsx";
-import { getStatus } from "../utils/ticketUtils.js";
+import { formatDate, getShortDescription, getStatus } from "../utils/ticketUtils.js";
 
 const TicketCard = forwardRef(function TicketCard(
   {
@@ -79,7 +79,7 @@ const TicketCard = forwardRef(function TicketCard(
             {ticket.id}
           </p>
           <p className="truncate text-sm leading-5 text-slate-500 dark:text-slate-400">
-            {ticket.user}
+            {ticket.userSnapshot?.name ?? ticket.user ?? "—"}
           </p>
         </div>
         <div
@@ -119,14 +119,14 @@ const TicketCard = forwardRef(function TicketCard(
       >
         <div className="overflow-hidden">
           <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-            {ticket.shortDescription}
+            {getShortDescription(ticket.fullDescription)}
           </p>
 
           <div className="mt-4 grid gap-2 text-sm text-slate-600 dark:text-slate-300">
-            <InfoRow icon={UserRound} value={ticket.user} />
-            <InfoRow icon={Building2} value={ticket.sector} />
-            <InfoRow icon={Tag} value={ticket.deviceTag} />
-            <InfoRow icon={CalendarDays} value={ticket.date} />
+            <InfoRow icon={UserRound} value={ticket.userSnapshot?.name ?? ticket.user ?? "—"} />
+            <InfoRow icon={Building2} value={ticket.userSnapshot?.sector ?? ticket.sector ?? "—"} />
+            <InfoRow icon={Tag} value={ticket.deviceTag || "—"} />
+            <InfoRow icon={CalendarDays} value={formatDate(ticket.createdAt)} />
             <InfoRow icon={Wrench} value={`${ticket.category} / ${ticket.subcategory}`} />
           </div>
 

@@ -1,4 +1,4 @@
-import { formatActionDate } from "../utils/ticketUtils.js";
+import { formatDate } from "../utils/ticketUtils.js";
 
 export default function HistoryTimeline({ history }) {
   return (
@@ -12,7 +12,7 @@ export default function HistoryTimeline({ history }) {
                 {entry.action}
               </p>
               <time className="text-xs text-slate-500 dark:text-slate-400">
-                {formatActionDate(entry.date)}
+                {formatDate(entry.createdAt ?? entry.date)}
               </time>
             </div>
             <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{entry.detail}</p>

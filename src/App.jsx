@@ -18,52 +18,67 @@ import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminSettings from "./pages/AdminSettings.jsx";
 import AdminProfile from "./pages/AdminProfile.jsx";
 
+import { UserProvider } from "./context/UserContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
+import { SettingsProvider } from "./context/SettingsContext.jsx";
+
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
+      <ToastProvider>
         <ThemeProvider>
-          <TicketProvider>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          {/*
+            UserProvider es el PRIMERO en el árbol de providers que dependen de datos de usuario.
+            AuthProvider está anidado dentro porque necesita acceder a useUsers() para autenticar.
+            Este orden es la base de la fuente única de verdad para todos los usuarios del sistema.
+          */}
+          <UserProvider>
+            <SettingsProvider>
+              <AuthProvider>
+                <TicketProvider>
+                  <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute role="usuario">
-                    <UserPortal />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<DashboardHome />} />
-                <Route path="create-ticket" element={<CreateTicketPage />} />
-                <Route path="my-tickets" element={<MyTicketsPage />} />
-                <Route path="profile" element={<ProfilePage />} />
-              </Route>
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute role="usuario">
+                          <UserPortal />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<DashboardHome />} />
+                      <Route path="create-ticket" element={<CreateTicketPage />} />
+                      <Route path="my-tickets" element={<MyTicketsPage />} />
+                      <Route path="profile" element={<ProfilePage />} />
+                    </Route>
 
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute role="admin">
-                    <AdminLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<AdminDashboard />} />
-                <Route path="tickets" element={<AdminTickets />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="settings" element={<AdminSettings />} />
-                <Route path="profile" element={<AdminProfile />} />
-              </Route>
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute role="admin">
+                          <AdminLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="tickets" element={<AdminTickets />} />
+                      <Route path="users" element={<AdminUsers />} />
+                      <Route path="settings" element={<AdminSettings />} />
+                      <Route path="profile" element={<AdminProfile />} />
+                    </Route>
 
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </TicketProvider>
+                    <Route path="/" element={<RootRedirect />} />
+                    <Route path="*" element={<Navigate to="/login" replace />} />
+                  </Routes>
+                </TicketProvider>
+              </AuthProvider>
+            </SettingsProvider>
+          </UserProvider>
         </ThemeProvider>
-      </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }
