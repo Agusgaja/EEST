@@ -25,10 +25,11 @@ export default function AdminDashboard() {
   const { users } = useUsers();
   const { theme, toggleTheme } = useTheme();
 
-  // Bug #2 corregido: el ID del estado "en proceso" es "en-proceso" (guión), no "en_proceso"
-  const openCount    = tickets.filter((t) => t.status === "abierto").length;
-  const processCount = tickets.filter((t) => t.status === "en-proceso").length;
-  const resolvedCount = tickets.filter((t) => t.status === "resuelto").length;
+  const countPendiente = tickets.filter((t) => t.status === "pendiente").length;
+  const countAsignado = tickets.filter((t) => t.status === "asignado").length;
+  const countEnProceso = tickets.filter((t) => t.status === "en-proceso").length;
+  const countResueltoPend = tickets.filter((t) => t.status === "resuelto-pendiente").length;
+  const countCerrado = tickets.filter((t) => t.status === "cerrado").length;
 
   // Bug #1 corregido: usar UserContext como fuente de verdad (no mockUsers estático)
   const activeUsersCount = users.filter((u) => u.estado === "Activo").length;
@@ -47,27 +48,39 @@ export default function AdminDashboard() {
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 grid-cols-2 sm:grid-cols-3">
         <MetricCard
-          title="Abiertos"
-          value={openCount}
+          title="Pendientes"
+          value={countPendiente}
           icon={FileWarning}
-          colorClass="bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
+          colorClass="bg-slate-50 text-slate-600 dark:bg-white/5 dark:text-slate-400"
+        />
+        <MetricCard
+          title="Asignados"
+          value={countAsignado}
+          icon={Clock}
+          colorClass="bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
         />
         <MetricCard
           title="En Proceso"
-          value={processCount}
+          value={countEnProceso}
           icon={Clock}
           colorClass="bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
         />
         <MetricCard
-          title="Resueltos"
-          value={resolvedCount}
+          title="Por Cerrar"
+          value={countResueltoPend}
+          icon={CheckCircle2}
+          colorClass="bg-teal-50 text-teal-600 dark:bg-teal-500/10 dark:text-teal-400"
+        />
+        <MetricCard
+          title="Cerrados"
+          value={countCerrado}
           icon={CheckCircle2}
           colorClass="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
         />
         <MetricCard
-          title="Usuarios activos"
+          title="Usuarios"
           value={activeUsersCount}
           icon={Users}
           colorClass="bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400"

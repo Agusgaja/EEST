@@ -162,8 +162,12 @@ export default function AdminUsers() {
       confirmText: user.estado === "Activo" ? "Desactivar" : "Activar",
       isDanger: user.estado === "Activo",
       onConfirm: () => {
-        toggleUserStatus(user.id);
-        showToast(`Usuario ${user.estado === "Activo" ? "desactivado" : "activado"} correctamente`);
+        try {
+          toggleUserStatus(user.id);
+          showToast(`Usuario ${user.estado === "Activo" ? "desactivado" : "activado"} correctamente`);
+        } catch (error) {
+          showToast(error.message, "error");
+        }
       }
     });
     setIsConfirmModalOpen(true);
@@ -233,6 +237,7 @@ export default function AdminUsers() {
             >
               <option value="Todos">Roles: Todos</option>
               <option value="Admin">Admin</option>
+              <option value="Técnico">Técnico</option>
               <option value="Usuario">Usuario</option>
             </select>
           </div>
@@ -324,7 +329,11 @@ export default function AdminUsers() {
                     </td>
                     <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{user.sector}</td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                      <span className={`inline-flex rounded-md px-2 py-1 text-xs font-medium ${
+                        user.rol === 'Admin' ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' :
+                        user.rol === 'Técnico' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' :
+                        'bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300'
+                      }`}>
                         {user.rol}
                       </span>
                     </td>

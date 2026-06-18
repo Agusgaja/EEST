@@ -5,21 +5,38 @@
  */
 export const TICKET_STATUSES = [
   {
-    id: "abierto",
-    label: "Abierto",
-    columnLabel: "Abiertos",
+    id: "pendiente",
+    label: "Pendiente",
+    columnLabel: "Pendientes",
     tone: "blue",
+    pulse: true,
+  },
+  {
+    id: "asignado",
+    label: "Asignado",
+    columnLabel: "Asignados",
+    tone: "indigo",
+    pulse: false,
   },
   {
     id: "en-proceso",
     label: "En proceso",
     columnLabel: "En proceso",
     tone: "amber",
+    pulse: false,
   },
   {
-    id: "resuelto",
-    label: "Resuelto",
-    columnLabel: "Resueltos",
+    id: "resuelto-pendiente",
+    label: "Resuelto — pend. conformidad",
+    columnLabel: "Por cerrar",
+    tone: "teal",
+    pulse: true,
+  },
+  {
+    id: "cerrado",
+    label: "Cerrado",
+    columnLabel: "Cerrados",
     tone: "green",
+    pulse: false,
   },
 ];

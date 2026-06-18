@@ -18,7 +18,7 @@ import { formatDate, getShortDescription, getStatus } from "../utils/ticketUtils
 
 export default function MyTicketsPage() {
   const { user } = useAuth();
-  const { tickets } = useTickets();
+  const { tickets, confirmTicket, changeStatus, addObservation } = useTickets();
   const [detailTicketId, setDetailTicketId] = useState(null);
 
   // Filtro por userId (referencia segura). Fallback: comparación por nombre para tickets legacy.
@@ -29,6 +29,18 @@ export default function MyTicketsPage() {
   const detailTicket = detailTicketId
     ? tickets.find((t) => t.id === detailTicketId)
     : null;
+
+  function handleConfirm() {
+    if (!detailTicket) return;
+    confirmTicket(detailTicket.id, `${user.nombre} ${user.apellido}`, user.id);
+  }
+
+  function handleReportIssue() {
+    if (!detailTicket) return;
+    const actorName = `${user.nombre} ${user.apellido}`;
+    addObservation(detailTicket.id, "El usuario reporta que el problema persiste y rechaza la resolución.", actorName, user.id);
+    changeStatus(detailTicket.id, "en-proceso", actorName, user.id);
+  }
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -110,6 +122,32 @@ export default function MyTicketsPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-5">
+              {detailTicket.status === "resuelto-pendiente" && (
+                <section className="mb-6 rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-500/30 dark:bg-teal-500/10">
+                  <h3 className="text-sm font-bold text-teal-800 dark:text-teal-300">
+                    Se requiere tu conformidad
+                  </h3>
+                  <p className="mt-1 text-sm text-teal-700 dark:text-teal-400">
+                    El técnico ha marcado este ticket como resuelto. Por favor, confirmá que el problema fue solucionado o reportá si persiste.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <button
+                      onClick={handleConfirm}
+                      className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 text-sm font-semibold text-white transition-all hover:bg-teal-500 active:scale-95"
+                    >
+                      <CheckCircle2 size={16} />
+                      Confirmar resolución
+                    </button>
+                    <button
+                      onClick={handleReportIssue}
+                      className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-teal-600/30 bg-white px-4 text-sm font-semibold text-teal-700 transition-all hover:bg-teal-50 active:scale-95 dark:border-teal-400/30 dark:bg-transparent dark:text-teal-300 dark:hover:bg-teal-500/10"
+                    >
+                      Reportar problema
+                    </button>
+                  </div>
+                </section>
+              )}
+
               <section className="space-y-4">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   Información del ticket

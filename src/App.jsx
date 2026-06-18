@@ -17,6 +17,9 @@ import AdminTickets from "./pages/AdminTickets.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminSettings from "./pages/AdminSettings.jsx";
 import AdminProfile from "./pages/AdminProfile.jsx";
+import TecnicoLayout from "./pages/TecnicoLayout.jsx";
+import TecnicoTickets from "./pages/TecnicoTickets.jsx";
+import TecnicoProfile from "./pages/TecnicoProfile.jsx";
 
 import { UserProvider } from "./context/UserContext.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
@@ -70,6 +73,18 @@ export default function App() {
                       <Route path="profile" element={<AdminProfile />} />
                     </Route>
 
+                    <Route
+                      path="/tecnico"
+                      element={
+                        <ProtectedRoute role="tecnico">
+                          <TecnicoLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<TecnicoTickets />} />
+                      <Route path="profile" element={<TecnicoProfile />} />
+                    </Route>
+
                     <Route path="/" element={<RootRedirect />} />
                     <Route path="*" element={<Navigate to="/login" replace />} />
                   </Routes>
@@ -87,5 +102,6 @@ function RootRedirect() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   if (user.role === "admin") return <Navigate to="/admin" replace />;
+  if (user.role === "tecnico") return <Navigate to="/tecnico" replace />;
   return <Navigate to="/dashboard" replace />;
 }

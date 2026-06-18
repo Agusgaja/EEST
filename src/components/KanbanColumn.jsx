@@ -3,21 +3,27 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import SortableTicketCard from "./SortableTicketCard.jsx";
 
 const COLUMN_ACCENTS = {
-  abierto: "border-blue-500/30 dark:border-blue-500/20",
+  pendiente: "border-slate-500/30 dark:border-slate-500/20",
+  asignado: "border-blue-500/30 dark:border-blue-500/20",
   "en-proceso": "border-amber-500/30 dark:border-amber-500/20",
-  resuelto: "border-emerald-500/30 dark:border-emerald-500/20",
+  "resuelto-pendiente": "border-teal-500/30 dark:border-teal-500/20",
+  cerrado: "border-emerald-500/30 dark:border-emerald-500/20",
 };
 
 const COLUMN_HEADER_ACCENTS = {
-  abierto: "text-blue-600 dark:text-blue-400",
+  pendiente: "text-slate-600 dark:text-slate-400",
+  asignado: "text-blue-600 dark:text-blue-400",
   "en-proceso": "text-amber-600 dark:text-amber-400",
-  resuelto: "text-emerald-600 dark:text-emerald-400",
+  "resuelto-pendiente": "text-teal-600 dark:text-teal-400",
+  cerrado: "text-emerald-600 dark:text-emerald-400",
 };
 
 const COLUMN_COUNT_ACCENTS = {
-  abierto: "bg-blue-500/10 text-blue-600 ring-blue-400/20 dark:text-blue-300 dark:ring-blue-500/20",
+  pendiente: "bg-slate-500/10 text-slate-600 ring-slate-400/20 dark:text-slate-300 dark:ring-slate-500/20",
+  asignado: "bg-blue-500/10 text-blue-600 ring-blue-400/20 dark:text-blue-300 dark:ring-blue-500/20",
   "en-proceso": "bg-amber-500/10 text-amber-600 ring-amber-400/20 dark:text-amber-300 dark:ring-amber-500/20",
-  resuelto: "bg-emerald-500/10 text-emerald-600 ring-emerald-400/20 dark:text-emerald-300 dark:ring-emerald-500/20",
+  "resuelto-pendiente": "bg-teal-500/10 text-teal-600 ring-teal-400/20 dark:text-teal-300 dark:ring-teal-500/20",
+  cerrado: "bg-emerald-500/10 text-emerald-600 ring-emerald-400/20 dark:text-emerald-300 dark:ring-emerald-500/20",
 };
 
 export default function KanbanColumn({
@@ -38,7 +44,7 @@ export default function KanbanColumn({
 
   return (
     <section
-      className={`flex min-h-[calc(100vh-230px)] min-w-0 flex-col rounded-xl border transition-all duration-200 ${
+      className={`flex min-h-[calc(100vh-230px)] min-w-[320px] max-w-[360px] flex-1 shrink-0 snap-center flex-col rounded-xl border transition-all duration-200 ${
         COLUMN_ACCENTS[status.id] ?? "border-slate-200 dark:border-white/10"
       } ${
         isOver

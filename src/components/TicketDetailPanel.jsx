@@ -13,6 +13,7 @@ import DetailField from "./DetailField.jsx";
 import HistoryTimeline from "./HistoryTimeline.jsx";
 import StatusBadge from "./StatusBadge.jsx";
 import { formatDate, getShortDescription, getStatus } from "../utils/ticketUtils.js";
+import { useUsers } from "../context/UserContext.jsx";
 
 export default function TicketDetailPanel({
   ticket,
@@ -20,8 +21,13 @@ export default function TicketDetailPanel({
   onClose,
   onUpdateStatus,
   onAddObservation,
+  onAssignTicket,
 }) {
+  const { users } = useUsers();
+  const tecnicos = useMemo(() => users.filter((u) => u.role === "tecnico"), [users]);
+  
   const [draftStatus, setDraftStatus] = useState(ticket.status);
+  const [selectedTechId, setSelectedTechId] = useState(ticket.assignedTo?.id || "");
   const [observation, setObservation] = useState("");
   const [isClosing, setIsClosing] = useState(false);
   const currentStatus = getStatus(statuses, ticket.status);
@@ -44,9 +50,17 @@ export default function TicketDetailPanel({
     event.preventDefault();
     const trimmed = observation.trim();
     if (!trimmed) return;
-    // El actor real se pasa desde AdminTickets — aquí solo enviamos el texto.
     onAddObservation(ticket.id, trimmed);
     setObservation("");
+  }
+
+  function handleAssign(event) {
+    event.preventDefault();
+    if (!selectedTechId) return;
+    if (selectedTechId === ticket.assignedTo?.id) return;
+    const tech = tecnicos.find(t => t.id === selectedTechId);
+    if (!tech) return;
+    onAssignTicket(ticket.id, tech.id, `${tech.nombre} ${tech.apellido}`);
   }
 
   function handleClose() {
@@ -112,6 +126,37 @@ export default function TicketDetailPanel({
           {/* Gestión */}
           <section className="mt-8 space-y-4">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">Gestión</h3>
+            
+            {/* Asignación */}
+            {["pendiente", "asignado", "en-proceso"].includes(ticket.status) && (
+              <form className="glass-card grid gap-3 rounded-xl p-4" onSubmit={handleAssign}>
+                <label className="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Técnico asignado
+                  <select
+                    className="min-h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 transition-colors focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:focus:border-violet-500/50"
+                    value={selectedTechId}
+                    onChange={(e) => setSelectedTechId(e.target.value)}
+                  >
+                    <option value="" className="dark:bg-slate-900 dark:text-slate-100">Sin asignar</option>
+                    {tecnicos.map((t) => (
+                      <option className="dark:bg-slate-900 dark:text-slate-100" key={t.id} value={t.id}>
+                        {t.nombre} {t.apellido} ({t.legajo})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-slate-800 px-4 text-sm font-semibold text-white transition-all duration-200 hover:bg-slate-700 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white/10 dark:hover:bg-white/20"
+                  disabled={selectedTechId === (ticket.assignedTo?.id || "")}
+                  type="submit"
+                >
+                  <UserRound size={17} aria-hidden="true" />
+                  Asignar técnico
+                </button>
+              </form>
+            )}
+
+            {/* Cambio de Estado */}
             <form className="glass-card grid gap-3 rounded-xl p-4" onSubmit={handleStatusSubmit}>
               <label className="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                 Estado

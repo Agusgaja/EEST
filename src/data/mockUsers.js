@@ -88,4 +88,18 @@ export const mockUsers = [
     password: "usuario123",
     fechaRegistro: "2023-06-10",
   },
+  {
+    id: "U-106",
+    nombre: "Martín",
+    apellido: "Paz",
+    legajo: "TEC-001",
+    email: "m.paz@industria.com",
+    telefono: "+54 11 6789-0123",
+    sector: "Sistemas e Infraestructura",
+    estado: "Activo",
+    rol: "Técnico",
+    role: "tecnico",
+    password: "tecnico123",
+    fechaRegistro: "2024-02-01",
+  },
 ];

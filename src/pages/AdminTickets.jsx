@@ -66,7 +66,7 @@ function moveTicketToColumn(columns, ticketId, targetStatusId) {
 
 export default function AdminTickets() {
   const { user } = useAuth();
-  const { tickets, changeStatus, addObservation } = useTickets();
+  const { tickets, changeStatus, addObservation, assignTicket } = useTickets();
   const { theme, toggleTheme } = useTheme();
 
   const [columns, setColumns] = useState(() => buildColumns(tickets));
@@ -140,13 +140,22 @@ export default function AdminTickets() {
     setColumns((prev) => moveTicketToColumn(prev, ticketId, newStatusId));
   }
 
-  // Usa addObservation del contexto — el contexto genera la entrada de historial con el actor real.
   function handleAddObservation(ticketId, text) {
     addObservation(
       ticketId,
       text,
       `${user.nombre} ${user.apellido}`,
       user.id,
+    );
+  }
+
+  function handleAssignTicket(ticketId, techId, techName) {
+    assignTicket(
+      ticketId,
+      techId,
+      techName,
+      `${user.nombre} ${user.apellido}`,
+      user.id
     );
   }
 
@@ -280,7 +289,7 @@ export default function AdminTickets() {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <section className="grid gap-4 lg:grid-cols-3">
+          <section className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
             {TICKET_STATUSES.map((status) => (
               <KanbanColumn
                 key={status.id}
@@ -315,6 +324,7 @@ export default function AdminTickets() {
           onClose={() => setSelectedTicketId(null)}
           onUpdateStatus={handleUpdateStatus}
           onAddObservation={handleAddObservation}
+          onAssignTicket={handleAssignTicket}
         />
       ) : null}
 

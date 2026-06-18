@@ -19,9 +19,10 @@ export const mockTickets = [
     deviceTag: "LUM-A12",
     fullDescription:
       "La luminaria principal del sector de empaque parpadea desde el inicio del turno. El equipo trabaja con baja visibilidad y solicita revisión preventiva.",
-    status: "abierto",
+    status: "pendiente",
     createdAt: "2026-05-29T08:15:00.000Z",
     assignedTo: null,
+    resolvedAt: null,
     closedAt: null,
     observations: [
       {
@@ -65,9 +66,10 @@ export const mockTickets = [
     deviceTag: "TOM-E11",
     fullDescription:
       "La toma corriente de la mesa de embalaje E11 no entrega tensión. El sector solicita revisión para conectar impresora auxiliar.",
-    status: "abierto",
+    status: "pendiente",
     createdAt: "2026-05-26T17:05:00.000Z",
     assignedTo: null,
+    resolvedAt: null,
     closedAt: null,
     observations: [],
     history: [
@@ -95,9 +97,10 @@ export const mockTickets = [
     deviceTag: "CT-P05",
     fullDescription:
       "La cinta transportadora del puesto P05 presenta ruido irregular en el rodillo de salida. Se solicita revisión antes del próximo turno.",
-    status: "abierto",
+    status: "pendiente",
     createdAt: "2026-05-27T08:40:00.000Z",
     assignedTo: null,
+    resolvedAt: null,
     closedAt: null,
     observations: [],
     history: [
@@ -127,16 +130,17 @@ export const mockTickets = [
     deviceTag: "PTN-D03",
     fullDescription:
       "El portón lateral del depósito queda trabado a mitad de recorrido. Se solicita inspección del riel y ajuste de cierre.",
-    status: "en-proceso",
+    status: "asignado",
     createdAt: "2026-05-29T07:42:00.000Z",
-    assignedTo: null,
+    assignedTo: { id: "U-106", name: "Martín Paz" },
+    resolvedAt: null,
     closedAt: null,
     observations: [
       {
         id: "obs-2",
         author: "Rocío Pereyra",
         authorId: "U-104",
-        text: "Se revisa el riel. Posible desgaste en rodamiento superior.",
+        text: "Se asignó para revisión de riel. Posible desgaste en rodamiento superior.",
         createdAt: "2026-05-29T09:05:00.000Z",
       },
     ],
@@ -152,7 +156,15 @@ export const mockTickets = [
       {
         id: "hist-4",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a En proceso.",
+        detail: "Cambio de Pendiente a Asignado.",
+        actor: "Rocío Pereyra",
+        actorId: "U-104",
+        createdAt: "2026-05-29T08:55:00.000Z",
+      },
+      {
+        id: "hist-4a",
+        action: "Asignado a Martín Paz",
+        detail: "Técnico asignado al ticket.",
         actor: "Rocío Pereyra",
         actorId: "U-104",
         createdAt: "2026-05-29T08:55:00.000Z",
@@ -160,7 +172,7 @@ export const mockTickets = [
       {
         id: "hist-5",
         action: "Observación agregada",
-        detail: "Se registra primera inspección del portón.",
+        detail: "Se registra indicación de inspección.",
         actor: "Rocío Pereyra",
         actorId: "U-104",
         createdAt: "2026-05-29T09:05:00.000Z",
@@ -181,15 +193,16 @@ export const mockTickets = [
     deviceTag: "MES-COM-08",
     fullDescription:
       "Una mesa del comedor del sector de logística quedó inestable luego del último movimiento de mobiliario. Requiere ajuste para evitar incidentes.",
-    status: "resuelto",
+    status: "cerrado",
     createdAt: "2026-05-27T09:25:00.000Z",
-    assignedTo: null,
-    closedAt: "2026-05-27T10:15:00.000Z",
+    assignedTo: { id: "U-106", name: "Martín Paz" },
+    resolvedAt: "2026-05-27T10:15:00.000Z",
+    closedAt: "2026-05-27T11:00:00.000Z",
     observations: [
       {
         id: "obs-5",
-        author: "Rocío Pereyra",
-        authorId: "U-104",
+        author: "Martín Paz",
+        authorId: "U-106",
         text: "Se ajustaron fijaciones y se revisó estabilidad.",
         createdAt: "2026-05-27T10:10:00.000Z",
       },
@@ -206,10 +219,18 @@ export const mockTickets = [
       {
         id: "hist-14",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a Resuelto.",
-        actor: "Rocío Pereyra",
-        actorId: "U-104",
+        detail: "Cambio de En proceso a Resuelto — pend. conformidad.",
+        actor: "Martín Paz",
+        actorId: "U-106",
         createdAt: "2026-05-27T10:15:00.000Z",
+      },
+      {
+        id: "hist-14b",
+        action: "Conformidad confirmada",
+        detail: "El usuario confirmó la resolución.",
+        actor: "Javier Torres",
+        actorId: "U-102",
+        createdAt: "2026-05-27T11:00:00.000Z",
       },
     ],
   },
@@ -227,10 +248,11 @@ export const mockTickets = [
     deviceTag: "SEN-D04",
     fullDescription:
       "El cartel de salida del pasillo D04 quedó flojo luego de tareas de limpieza. Requiere fijación para evitar caídas.",
-    status: "resuelto",
+    status: "cerrado",
     createdAt: "2026-05-25T09:10:00.000Z",
     assignedTo: null,
-    closedAt: "2026-05-25T10:05:00.000Z",
+    resolvedAt: "2026-05-25T10:05:00.000Z",
+    closedAt: "2026-05-25T11:05:00.000Z",
     observations: [
       {
         id: "obs-8",
@@ -252,10 +274,18 @@ export const mockTickets = [
       {
         id: "hist-23",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a Resuelto.",
+        detail: "Cambio de En proceso a Resuelto — pend. conformidad.",
         actor: "Rocío Pereyra",
         actorId: "U-104",
         createdAt: "2026-05-25T10:05:00.000Z",
+      },
+      {
+        id: "hist-23b",
+        action: "Conformidad confirmada",
+        detail: "El usuario confirmó la resolución.",
+        actor: "Javier Torres",
+        actorId: "U-102",
+        createdAt: "2026-05-25T11:05:00.000Z",
       },
     ],
   },
@@ -275,9 +305,10 @@ export const mockTickets = [
     deviceTag: "AA-Q02",
     fullDescription:
       "El aire acondicionado de la sala de calidad enciende, pero no enfría. La temperatura ambiente supera los límites recomendados para el área.",
-    status: "abierto",
+    status: "pendiente",
     createdAt: "2026-05-28T16:10:00.000Z",
     assignedTo: null,
+    resolvedAt: null,
     closedAt: null,
     observations: [],
     history: [
@@ -305,9 +336,10 @@ export const mockTickets = [
     deviceTag: "LED-Q07",
     fullDescription:
       "El panel LED sobre el banco de inspección Q07 perdió intensidad. El área solicita revisión para mantener condiciones de control visual.",
-    status: "abierto",
+    status: "pendiente",
     createdAt: "2026-05-25T13:42:00.000Z",
     assignedTo: null,
+    resolvedAt: null,
     closedAt: null,
     observations: [],
     history: [
@@ -337,10 +369,11 @@ export const mockTickets = [
     deviceTag: "BAN-ADM-01",
     fullDescription:
       "Se detecta una pérdida constante debajo del lavamanos del baño de administración. El piso queda húmedo al final de cada jornada.",
-    status: "resuelto",
+    status: "cerrado",
     createdAt: "2026-05-28T11:35:00.000Z",
     assignedTo: null,
-    closedAt: "2026-05-28T13:25:00.000Z",
+    resolvedAt: "2026-05-28T13:25:00.000Z",
+    closedAt: "2026-05-28T14:00:00.000Z",
     observations: [
       {
         id: "obs-3",
@@ -362,7 +395,7 @@ export const mockTickets = [
       {
         id: "hist-8",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a En proceso.",
+        detail: "Cambio de Pendiente a En proceso.",
         actor: "Admin Sistema",
         actorId: "U-100",
         createdAt: "2026-05-28T12:05:00.000Z",
@@ -378,10 +411,18 @@ export const mockTickets = [
       {
         id: "hist-10",
         action: "Estado actualizado",
-        detail: "Cambio de En proceso a Resuelto.",
+        detail: "Cambio de En proceso a Resuelto — pend. conformidad.",
         actor: "Admin Sistema",
         actorId: "U-100",
         createdAt: "2026-05-28T13:25:00.000Z",
+      },
+      {
+        id: "hist-10b",
+        action: "Conformidad confirmada",
+        detail: "El usuario confirmó la resolución.",
+        actor: "Rocío Pereyra",
+        actorId: "U-104",
+        createdAt: "2026-05-28T14:00:00.000Z",
       },
     ],
   },
@@ -401,13 +442,14 @@ export const mockTickets = [
       "La puerta principal de recepción no amortigua el cierre y golpea contra el marco. Se solicita ajuste del brazo hidráulico.",
     status: "en-proceso",
     createdAt: "2026-05-26T14:12:00.000Z",
-    assignedTo: null,
+    assignedTo: { id: "U-106", name: "Martín Paz" },
+    resolvedAt: null,
     closedAt: null,
     observations: [
       {
         id: "obs-6",
-        author: "Admin Sistema",
-        authorId: "U-100",
+        author: "Martín Paz",
+        authorId: "U-106",
         text: "Se revisará el brazo hidráulico al finalizar el horario de atención.",
         createdAt: "2026-05-26T15:00:00.000Z",
       },
@@ -424,9 +466,9 @@ export const mockTickets = [
       {
         id: "hist-18",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a En proceso.",
-        actor: "Admin Sistema",
-        actorId: "U-100",
+        detail: "Cambio de Asignado a En proceso.",
+        actor: "Martín Paz",
+        actorId: "U-106",
         createdAt: "2026-05-26T15:00:00.000Z",
       },
     ],
@@ -449,13 +491,14 @@ export const mockTickets = [
       "La balanza de control del sector presenta fluctuaciones al pesar muestras pequeñas. Se solicita revisión y calibración.",
     status: "en-proceso",
     createdAt: "2026-05-27T15:50:00.000Z",
-    assignedTo: null,
+    assignedTo: { id: "U-106", name: "Martín Paz" },
+    resolvedAt: null,
     closedAt: null,
     observations: [
       {
         id: "obs-4",
-        author: "Admin Sistema",
-        authorId: "U-100",
+        author: "Martín Paz",
+        authorId: "U-106",
         text: "Equipo retirado del banco de trabajo para prueba en superficie nivelada.",
         createdAt: "2026-05-28T10:30:00.000Z",
       },
@@ -472,9 +515,9 @@ export const mockTickets = [
       {
         id: "hist-12",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a En proceso.",
-        actor: "Admin Sistema",
-        actorId: "U-100",
+        detail: "Cambio de Asignado a En proceso.",
+        actor: "Martín Paz",
+        actorId: "U-106",
         createdAt: "2026-05-28T09:45:00.000Z",
       },
     ],
@@ -493,10 +536,11 @@ export const mockTickets = [
     deviceTag: "CAR-H02",
     fullDescription:
       "El cargador de taladro H02 no enciende el indicador de carga al conectar baterías. Se solicita prueba y posible reemplazo.",
-    status: "resuelto",
+    status: "resuelto-pendiente",
     createdAt: "2026-05-26T10:18:00.000Z",
     assignedTo: null,
-    closedAt: "2026-05-26T11:10:00.000Z",
+    resolvedAt: "2026-05-26T11:10:00.000Z",
+    closedAt: null,
     observations: [
       {
         id: "obs-7",
@@ -518,7 +562,7 @@ export const mockTickets = [
       {
         id: "hist-20",
         action: "Estado actualizado",
-        detail: "Cambio de Abierto a Resuelto.",
+        detail: "Cambio de En proceso a Resuelto — pend. conformidad.",
         actor: "Admin Sistema",
         actorId: "U-100",
         createdAt: "2026-05-26T11:10:00.000Z",

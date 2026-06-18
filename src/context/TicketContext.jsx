@@ -6,7 +6,7 @@ const TicketContext = createContext(null);
 
 // Cambiamos la clave al introducir un schema incompatible con la versión anterior.
 // Esto fuerza una recarga desde mockTickets y evita errores con datos viejos en localStorage.
-const STORAGE_KEY = "maintenance-tickets-v2";
+const STORAGE_KEY = "maintenance-tickets-v3";
 
 function loadTickets() {
   try {
@@ -53,9 +53,10 @@ export function TicketProvider({ children }) {
         deviceTag: deviceTag?.trim() ?? "",
         fullDescription: fullDescription.trim(),
         // shortDescription eliminado del schema — se deriva en render con getShortDescription()
-        status: "abierto",
+        status: "pendiente",
         createdAt: now,
-        assignedTo: null,              // reservado para futuro flujo de asignación de técnicos
+        assignedTo: null,              // { id, name } cuando se asigna técnico
+        resolvedAt: null,
         closedAt: null,
         observations: [],
         history: [
@@ -90,7 +91,8 @@ export function TicketProvider({ children }) {
         return {
           ...t,
           status: newStatusId,
-          closedAt: newStatusId === "resuelto" ? now : t.closedAt,
+          resolvedAt: newStatusId === "resuelto-pendiente" ? now : t.resolvedAt,
+          closedAt: newStatusId === "cerrado" ? now : t.closedAt,
           history: [
             ...t.history,
             {
@@ -144,9 +146,121 @@ export function TicketProvider({ children }) {
     );
   }, []);
 
+  /**
+   * Asigna un técnico a un ticket.
+   */
+  const assignTicket = useCallback((ticketId, technicianId, technicianName, actor, actorId) => {
+    const now = new Date().toISOString();
+    setTickets((prev) =>
+      prev.map((t) => {
+        if (t.id !== ticketId) return t;
+        const wasPendiente = t.status === "pendiente";
+        const newStatus = wasPendiente ? "asignado" : t.status;
+        
+        let historyEntries = [...t.history];
+        if (wasPendiente) {
+          const prevLabel = TICKET_STATUSES.find((s) => s.id === t.status)?.label ?? t.status;
+          const newLabel = TICKET_STATUSES.find((s) => s.id === "asignado")?.label ?? "Asignado";
+          historyEntries.push({
+            id: `hist-${Date.now()}-status`,
+            action: "Estado actualizado",
+            detail: `Cambio de ${prevLabel} a ${newLabel}.`,
+            actor: actor ?? "Sistema",
+            actorId: actorId ?? "system",
+            createdAt: now,
+          });
+        }
+        
+        historyEntries.push({
+          id: `hist-${Date.now()}-assign`,
+          action: `Asignado a ${technicianName}`,
+          detail: "Técnico asignado al ticket.",
+          actor: actor ?? "Sistema",
+          actorId: actorId ?? "system",
+          createdAt: now,
+        });
+
+        return {
+          ...t,
+          status: newStatus,
+          assignedTo: { id: technicianId, name: technicianName },
+          history: historyEntries,
+        };
+      }),
+    );
+  }, []);
+
+  /**
+   * Edita campos de un ticket (solo mientras status === "pendiente").
+   */
+  const editTicket = useCallback((ticketId, { category, subcategory, deviceTag, fullDescription }, actor, actorId) => {
+    const now = new Date().toISOString();
+    setTickets((prev) =>
+      prev.map((t) => {
+        if (t.id !== ticketId || t.status !== "pendiente") return t;
+        return {
+          ...t,
+          category,
+          subcategory,
+          deviceTag: deviceTag?.trim() ?? "",
+          fullDescription: fullDescription.trim(),
+          history: [
+            ...t.history,
+            {
+              id: `hist-${Date.now()}`,
+              action: "Ticket editado",
+              detail: "Se actualizaron los detalles de la solicitud.",
+              actor: actor ?? "Sistema",
+              actorId: actorId ?? "system",
+              createdAt: now,
+            },
+          ],
+        };
+      }),
+    );
+  }, []);
+
+  /**
+   * Confirma la conformidad del usuario (cierra el ticket).
+   */
+  const confirmTicket = useCallback((ticketId, actor, actorId) => {
+    const now = new Date().toISOString();
+    setTickets((prev) =>
+      prev.map((t) => {
+        if (t.id !== ticketId) return t;
+        const prevLabel = TICKET_STATUSES.find((s) => s.id === t.status)?.label ?? t.status;
+        const newLabel = TICKET_STATUSES.find((s) => s.id === "cerrado")?.label ?? "Cerrado";
+        return {
+          ...t,
+          status: "cerrado",
+          closedAt: now,
+          history: [
+            ...t.history,
+            {
+              id: `hist-${Date.now()}-status`,
+              action: "Estado actualizado",
+              detail: `Cambio de ${prevLabel} a ${newLabel}.`,
+              actor: actor ?? "Sistema",
+              actorId: actorId ?? "system",
+              createdAt: now,
+            },
+            {
+              id: `hist-${Date.now()}-confirm`,
+              action: "Conformidad confirmada",
+              detail: "El usuario confirmó la resolución.",
+              actor: actor ?? "Sistema",
+              actorId: actorId ?? "system",
+              createdAt: now,
+            },
+          ],
+        };
+      }),
+    );
+  }, []);
+
   return (
     // setTickets NO se expone — los componentes deben usar las funciones encapsuladas
-    <TicketContext.Provider value={{ tickets, addTicket, changeStatus, addObservation }}>
+    <TicketContext.Provider value={{ tickets, addTicket, changeStatus, addObservation, assignTicket, editTicket, confirmTicket }}>
       {children}
     </TicketContext.Provider>
   );

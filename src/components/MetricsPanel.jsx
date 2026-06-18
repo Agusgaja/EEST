@@ -15,12 +15,14 @@ import {
 import { diffMinutes, formatDate } from "../utils/ticketUtils.js";
 
 const STATUS_COLORS = {
-  abierto: "#3b82f6",
+  pendiente: "#64748b",
+  asignado: "#3b82f6",
   "en-proceso": "#f59e0b",
-  resuelto: "#10b981",
+  "resuelto-pendiente": "#14b8a6",
+  cerrado: "#10b981",
 };
 
-const CHART_COLORS = ["#3b82f6", "#f59e0b", "#10b981"];
+const CHART_COLORS = ["#64748b", "#3b82f6", "#f59e0b", "#14b8a6", "#10b981"];
 
 function formatDuration(minutes) {
   if (minutes == null) return "—";
@@ -41,14 +43,14 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
 
   const totalTickets = tickets.length;
 
-  // Usa createdAt (ISO 8601) y closedAt para calcular el tiempo real de resolución.
+  // Usa createdAt (ISO 8601) y resolvedAt para calcular el tiempo real de resolución.
   // Compatible con Chrome, Safari y Firefox.
   const averageResolutionTime = useMemo(() => {
-    const resolvedTickets = tickets.filter((t) => t.status === "resuelto" && t.closedAt);
+    const resolvedTickets = tickets.filter((t) => t.resolvedAt);
     if (resolvedTickets.length === 0) return null;
 
     const times = resolvedTickets
-      .map((t) => diffMinutes(t.createdAt, t.closedAt))
+      .map((t) => diffMinutes(t.createdAt, t.resolvedAt))
       .filter((m) => m !== null && m >= 0);
 
     if (times.length === 0) return null;
@@ -71,7 +73,7 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
       });
   }, [tickets]);
 
-  const resolvedCount = tickets.filter((t) => t.status === "resuelto").length;
+  const resolvedCount = tickets.filter((t) => t.resolvedAt).length;
 
   const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload?.length) return null;

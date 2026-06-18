@@ -131,7 +131,17 @@ const TicketCard = forwardRef(function TicketCard(
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-3">
-            <StatusBadge status={status} />
+            <div className="flex items-center gap-3">
+              <StatusBadge status={status} />
+              {ticket.assignedTo && (
+                <div 
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-700 ring-2 ring-white dark:bg-white/10 dark:text-slate-200 dark:ring-slate-900" 
+                  title={`Asignado a: ${ticket.assignedTo.name}`}
+                >
+                  {ticket.assignedTo.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
+                </div>
+              )}
+            </div>
             <span className="text-xs font-medium text-slate-400 dark:text-slate-500">
               Click para ver detalle
             </span>

@@ -10,8 +10,8 @@ export default function DashboardHome() {
   const myTickets = tickets.filter((t) =>
     t.userId ? t.userId === user.id : `${user.nombre} ${user.apellido}` === t.user,
   );
-  const openTickets = myTickets.filter((t) => t.status === "abierto");
-  const resolvedTickets = myTickets.filter((t) => t.status === "resuelto");
+  const activeTickets = myTickets.filter((t) => t.status !== "cerrado");
+  const closedTickets = myTickets.filter((t) => t.status === "cerrado");
 
   return (
     <div className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
@@ -31,12 +31,12 @@ export default function DashboardHome() {
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Total tickets</p>
         </div>
         <div className="glass-card rounded-xl p-5 dark:border-amber-500/20 dark:bg-amber-500/5">
-          <p className="text-3xl font-bold text-amber-700 dark:text-amber-300">{openTickets.length}</p>
-          <p className="mt-1 text-sm text-amber-600 dark:text-amber-300">Abiertos</p>
+          <p className="text-3xl font-bold text-amber-700 dark:text-amber-300">{activeTickets.length}</p>
+          <p className="mt-1 text-sm text-amber-600 dark:text-amber-300">Activos</p>
         </div>
         <div className="glass-card rounded-xl p-5 dark:border-emerald-500/20 dark:bg-emerald-500/5">
-          <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{resolvedTickets.length}</p>
-          <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-300">Resueltos</p>
+          <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{closedTickets.length}</p>
+          <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-300">Cerrados</p>
         </div>
       </div>
 

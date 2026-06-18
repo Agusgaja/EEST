@@ -8,7 +8,22 @@ const STORAGE_KEY = "maintenance-users";
 function loadUsers() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : mockUsers;
+    const parsedUsers = stored ? JSON.parse(stored) : mockUsers;
+    
+    // Recuperación de emergencia: asegurar que exista al menos un admin activo
+    const hasActiveAdmin = parsedUsers.some((u) => u.role === "admin" && u.estado === "Activo");
+    if (!hasActiveAdmin && parsedUsers.length > 0) {
+      // Buscar al administrador por defecto (admin@industria.com) o usar el primer usuario del array
+      const preferredIndex = parsedUsers.findIndex((u) => u.email === "admin@industria.com");
+      const adminIndex = preferredIndex !== -1 ? preferredIndex : 0;
+      parsedUsers[adminIndex] = {
+        ...parsedUsers[adminIndex],
+        rol: "Admin",
+        role: "admin",
+        estado: "Activo",
+      };
+    }
+    return parsedUsers;
   } catch {
     return mockUsers;
   }
@@ -53,15 +68,14 @@ export function UserProvider({ children }) {
         throw new Error("El teléfono ya está en uso por otro usuario.");
       }
       // ─── Solo si pasan todas las validaciones, actualizamos el estado ───
+      const userRol = userData.rol || "Usuario";
       const newUser = {
         ...userData,
         id: generateUserId(users),
         fechaRegistro: new Date().toISOString().split("T")[0],
         estado: userData.estado || "Activo",
-        // El rol de display en español se mantiene para la UI del admin
-        rol: userData.rol || "Usuario",
-        // El role en inglés se usa para el sistema de autenticación y rutas
-        role: "usuario", // Siempre "usuario" — los admins son creados manualmente
+        rol: userRol,
+        role: userRol === "Admin" ? "admin" : userRol === "Técnico" ? "tecnico" : "usuario",
       };
       setUsers((prev) => [...prev, newUser]);
     },
@@ -75,8 +89,28 @@ export function UserProvider({ children }) {
       if (users.find((u) => u.legajo === userData.legajo && u.id !== id)) {
         throw new Error("El legajo ya está en uso por otro usuario.");
       }
+      // ─── Verificación de Regla de Negocio: Administrador Único ──────────
+      const userToUpdate = users.find(u => u.id === id);
+      if (userToUpdate && userToUpdate.role === "admin" && userToUpdate.estado === "Activo") {
+        const newRol = userData.rol ?? userToUpdate.rol;
+        const newRole = newRol === "Admin" ? "admin" : newRol === "Técnico" ? "tecnico" : "usuario";
+        const newEstado = userData.estado ?? userToUpdate.estado;
+        
+        if (newRole !== "admin" || newEstado !== "Activo") {
+          const otherActiveAdmins = users.filter((u) => u.id !== id && u.role === "admin" && u.estado === "Activo");
+          if (otherActiveAdmins.length === 0) {
+            throw new Error("No se puede realizar esta acción: el sistema debe tener al menos un administrador activo.");
+          }
+        }
+      }
+
       // ─── Solo si pasa la validación, actualizamos el estado ─────────────
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...userData } : u)));
+      setUsers((prev) => prev.map((u) => {
+        if (u.id !== id) return u;
+        const newRol = userData.rol ?? u.rol;
+        const newRole = newRol === "Admin" ? "admin" : newRol === "Técnico" ? "tecnico" : "usuario";
+        return { ...u, ...userData, rol: newRol, role: newRole };
+      }));
     },
     [users],
   );
@@ -110,6 +144,14 @@ export function UserProvider({ children }) {
   );
 
   const toggleUserStatus = useCallback((id) => {
+    const userToUpdate = users.find((u) => u.id === id);
+    if (userToUpdate && userToUpdate.role === "admin" && userToUpdate.estado === "Activo") {
+      const otherActiveAdmins = users.filter((u) => u.id !== id && u.role === "admin" && u.estado === "Activo");
+      if (otherActiveAdmins.length === 0) {
+        throw new Error("No se puede desactivar al único administrador activo del sistema.");
+      }
+    }
+
     setUsers((prev) =>
       prev.map((u) =>
         u.id === id
@@ -117,7 +159,7 @@ export function UserProvider({ children }) {
           : u,
       ),
     );
-  }, []);
+  }, [users]);
 
   /**
    * Genera una contraseña temporal simulada.

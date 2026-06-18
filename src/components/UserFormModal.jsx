@@ -70,8 +70,11 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
       }
       onClose();
     } catch (error) {
-      // The context will throw an error if the legajo already exists
-      setErrors({ legajo: error.message });
+      if (error.message.includes("legajo") || error.message.includes("email") || error.message.includes("teléfono")) {
+        setErrors({ legajo: error.message });
+      } else {
+        showToast(error.message, "error");
+      }
     }
   };
 
@@ -158,6 +161,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               >
                 <option value="Admin">Admin</option>
+                <option value="Técnico">Técnico</option>
                 <option value="Usuario">Usuario</option>
               </select>
             </div>
