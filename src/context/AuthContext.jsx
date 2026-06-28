@@ -8,7 +8,7 @@ const SESSION_KEY = "maintenance-session";
 export function AuthProvider({ children }) {
   // AuthContext ya no gestiona su propia lista de usuarios.
   // Delega en UserContext, que es la única fuente de verdad.
-  const { users } = useUsers();
+  const { users, completePasswordChange } = useUsers();
 
   const [user, setUser] = useState(() => {
     try {
@@ -51,15 +51,28 @@ export function AuthProvider({ children }) {
    */
   const login = useCallback(
     (identifier, password) => {
+      const ident = identifier.trim().toLowerCase();
       const found = users.find(
         (u) =>
-          (u.legajo === identifier || u.email === identifier) &&
+          u.email.toLowerCase() === ident &&
           u.password === password,
       );
 
       if (!found) return { success: false, error: "Credenciales inválidas" };
       if (found.estado === "Inactivo") {
         return { success: false, error: "Esta cuenta está desactivada. Contacte al administrador." };
+      }
+
+      if (found.isTempPassword) {
+        const createdAt = new Date(found.tempPasswordCreatedAt).getTime();
+        const now = Date.now();
+        const hoursPassed = (now - createdAt) / (1000 * 60 * 60);
+
+        if (hoursPassed > 24) {
+          return { success: false, error: "La contraseña temporal ha expirado. Solicite una nueva al administrador." };
+        }
+        
+        return { success: true, requirePasswordChange: true, tempUserId: found.id };
       }
 
       // Nunca guardamos la contraseña en la sesión
@@ -69,6 +82,17 @@ export function AuthProvider({ children }) {
     },
     [users],
   );
+
+  const completeTempLogin = useCallback((tempUserId, newPassword) => {
+    completePasswordChange(tempUserId, newPassword);
+    const userToLogin = users.find(u => u.id === tempUserId);
+    if (userToLogin) {
+      const { password: _, isTempPassword, tempPasswordCreatedAt, ...safeUser } = userToLogin;
+      setUser(safeUser);
+      return safeUser;
+    }
+    return null;
+  }, [completePasswordChange, users]);
 
   const logout = useCallback(() => {
     setUser(null);
@@ -84,7 +108,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateSession }}>
+    <AuthContext.Provider value={{ user, login, logout, updateSession, completeTempLogin }}>
       {children}
     </AuthContext.Provider>
   );

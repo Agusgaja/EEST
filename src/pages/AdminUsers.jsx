@@ -38,7 +38,7 @@ function UserDetailModal({ user, onClose }) {
             </div>
             <div>
               <h4 className="text-xl font-bold text-slate-900 dark:text-slate-50">{user.nombre} {user.apellido}</h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{user.rol} • {user.legajo}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{user.rol}</p>
             </div>
           </div>
 
@@ -50,10 +50,6 @@ function UserDetailModal({ user, onClose }) {
             <div>
               <p className="font-medium text-slate-500 dark:text-slate-400">Teléfono</p>
               <p className="mt-1 text-slate-900 dark:text-slate-100">{user.telefono}</p>
-            </div>
-            <div>
-              <p className="font-medium text-slate-500 dark:text-slate-400">Sector</p>
-              <p className="mt-1 text-slate-900 dark:text-slate-100">{user.sector}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500 dark:text-slate-400">Estado</p>
@@ -127,8 +123,7 @@ export default function AdminUsers() {
       const matchSearch = 
         !searchNormalized ||
         fullName.includes(searchNormalized) ||
-        normalizeStr(u.email).includes(searchNormalized) ||
-        normalizeStr(u.legajo).includes(searchNormalized);
+        normalizeStr(u.email).includes(searchNormalized);
       
       const matchRole = roleFilter === "Todos" ? true : u.rol === roleFilter;
       const matchStatus = statusFilter === "Todos" ? true : u.estado === statusFilter;
@@ -219,7 +214,7 @@ export default function AdminUsers() {
           </div>
           <input
             type="text"
-            placeholder="Buscar por nombre, legajo o email..."
+            placeholder="Buscar por nombre o email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="block w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
@@ -276,7 +271,6 @@ export default function AdminUsers() {
               <tr>
                 <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Usuario</th>
                 <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Contacto</th>
-                <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Sector</th>
                 <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Rol</th>
                 <th className="px-6 py-4 font-semibold text-slate-600 dark:text-slate-300">Estado</th>
                 <th className="px-6 py-4 text-right font-semibold text-slate-600 dark:text-slate-300">Acciones</th>
@@ -319,7 +313,6 @@ export default function AdminUsers() {
                           <div className="font-medium text-slate-900 dark:text-slate-100">
                             {user.nombre} {user.apellido}
                           </div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">{user.legajo}</div>
                         </div>
                       </div>
                     </td>
@@ -327,7 +320,6 @@ export default function AdminUsers() {
                       <div className="text-slate-900 dark:text-slate-100">{user.email}</div>
                       <div className="text-xs text-slate-500 dark:text-slate-400">{user.telefono}</div>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{user.sector}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex rounded-md px-2 py-1 text-xs font-medium ${
                         user.rol === 'Admin' ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' :

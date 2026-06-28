@@ -2,23 +2,18 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useUsers } from "../context/UserContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
-import { useSettings } from "../context/SettingsContext.jsx";
 
 const initialForm = {
   nombre: "",
   apellido: "",
   email: "",
   telefono: "",
-  sector: "Producción",
   rol: "Usuario",
-  legajo: "",
   estado: "Activo"
 };
 export default function UserFormModal({ isOpen, onClose, userToEdit }) {
   const { addUser, updateUser } = useUsers();
   const { showToast } = useToast();
-  const { sectors } = useSettings();
-  const activeSectors = sectors.filter(s => s.estado === "Activo");
   
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
@@ -38,7 +33,6 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
     const newErrors = {};
     if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (!formData.apellido.trim()) newErrors.apellido = "El apellido es obligatorio.";
-    if (!formData.legajo.trim()) newErrors.legajo = "El legajo es obligatorio.";
     
     // Email regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -70,8 +64,8 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
       }
       onClose();
     } catch (error) {
-      if (error.message.includes("legajo") || error.message.includes("email") || error.message.includes("teléfono")) {
-        setErrors({ legajo: error.message });
+      if (error.message.includes("email") || error.message.includes("teléfono")) {
+        setErrors({ email: error.message });
       } else {
         showToast(error.message, "error");
       }
@@ -143,17 +137,6 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Legajo</label>
-              <input
-                type="text"
-                value={formData.legajo}
-                onChange={(e) => setFormData({ ...formData, legajo: e.target.value })}
-                className={`mt-1 block w-full rounded-lg border ${errors.legajo ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-white/5 dark:text-slate-100`}
-              />
-              {errors.legajo && <p className="mt-1 text-xs text-red-500">{errors.legajo}</p>}
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Rol</label>
               <select
                 value={formData.rol}
@@ -163,18 +146,6 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 <option value="Admin">Admin</option>
                 <option value="Técnico">Técnico</option>
                 <option value="Usuario">Usuario</option>
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Sector</label>
-              <select
-                value={formData.sector}
-                onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
-              >
-                <option value="">Seleccione un sector</option>
-                {activeSectors.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
           </div>

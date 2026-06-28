@@ -127,14 +127,6 @@ export default function ProfilePage() {
                 <p className={readonlyLabelClass}>Apellido</p>
                 <div className={readonlyClass}>{user?.apellido}</div>
               </div>
-              <div>
-                <p className={readonlyLabelClass}>Legajo</p>
-                <div className={readonlyClass}>{user?.legajo}</div>
-              </div>
-              <div>
-                <p className={readonlyLabelClass}>Sector</p>
-                <div className={readonlyClass}>{user?.sector}</div>
-              </div>
             </div>
           </div>
         </div>

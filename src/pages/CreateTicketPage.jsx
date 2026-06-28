@@ -8,28 +8,42 @@ import { useSettings } from "../context/SettingsContext.jsx";
 export default function CreateTicketPage() {
   const { user } = useAuth();
   const { addTicket } = useTickets();
-  const { categories, subcategories } = useSettings();
+  const { areas, motivos } = useSettings();
   const navigate = useNavigate();
 
-  const [category, setCategory] = useState("");
-  const [subcategory, setSubcategory] = useState("");
-  const [deviceTag, setDeviceTag] = useState("");
+  const [title, setTitle] = useState("");
+  const [area, setArea] = useState("");
+  const [motivo, setMotivo] = useState("");
   const [description, setDescription] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const activeCategories = categories.filter((c) => c.estado === "Activo");
-  const availableSubcategories = subcategories.filter(
-    (s) => s.estado === "Activo" && s.category === category,
-  );
+  const activeAreas = areas.filter((a) => a.estado === "Activo");
+  const activeMotivos = motivos.filter((m) => m.estado === "Activo");
+
+  function handleFileChange(e) {
+    if (!e.target.files) return;
+    const newFiles = Array.from(e.target.files).map(f => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      url: URL.createObjectURL(f)
+    }));
+    setAttachments(prev => [...prev, ...newFiles]);
+  }
+
+  function removeAttachment(index) {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
     if (isSubmitting) return;
     setError("");
 
-    if (!category.trim() || !subcategory.trim() || !description.trim()) {
-      setError("Categoría, subcategoría y descripción son obligatorios.");
+    if (!title.trim() || !area.trim() || !motivo.trim() || !description.trim()) {
+      setError("Título, área, motivo y descripción son obligatorios.");
       return;
     }
 
@@ -37,15 +51,14 @@ export default function CreateTicketPage() {
 
     // El contexto se encarga de construir el objeto completo y generar el ID.
     addTicket({
-      category: category.trim(),
-      subcategory: subcategory.trim(),
-      deviceTag: deviceTag.trim(),
+      title: title.trim(),
+      area: area.trim(),
+      motivo: motivo.trim(),
       fullDescription: description.trim(),
+      attachments,
       userId: user.id,
       userSnapshot: {
-        name: `${user.nombre} ${user.apellido}`,
-        sector: user.sector,
-        legajo: user.legajo,
+        name: `${user.nombre} ${user.apellido}`
       },
       source: "web",
     });
@@ -74,56 +87,50 @@ export default function CreateTicketPage() {
         <div className="space-y-4">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Categoría
-            </label>
-            <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                setSubcategory("");
-              }}
-            >
-              <option value="">Seleccione una categoría</option>
-              {activeCategories.map((c) => (
-                <option key={c.id} value={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Subcategoría
-            </label>
-            <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 disabled:opacity-50"
-              value={subcategory}
-              onChange={(e) => setSubcategory(e.target.value)}
-              disabled={!category}
-            >
-              <option value="">
-                {!category ? "Seleccione primero una categoría" : "Seleccione una subcategoría"}
-              </option>
-              {availableSubcategories.map((s) => (
-                <option key={s.id} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Etiqueta del equipo
+              Título del problema
             </label>
             <input
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
-              placeholder="Ej: LUM-A12, CT-P05 (opcional)"
-              value={deviceTag}
-              onChange={(e) => setDeviceTag(e.target.value)}
+              placeholder="Ej: Problema con luminaria..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Área
+            </label>
+            <select
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              value={area}
+              onChange={(e) => setArea(e.target.value)}
+            >
+              <option value="">Seleccione un área</option>
+              {activeAreas.map((a) => (
+                <option key={a.id} value={a.name}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Motivo
+            </label>
+            <select
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+            >
+              <option value="">Seleccione un motivo</option>
+              {activeMotivos.map((m) => (
+                <option key={m.id} value={m.name}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -136,6 +143,30 @@ export default function CreateTicketPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Archivos adjuntos
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100 dark:text-slate-400 dark:file:bg-violet-500/10 dark:file:text-violet-400 dark:hover:file:bg-violet-500/20"
+            />
+            {attachments.length > 0 && (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {attachments.map((file, idx) => (
+                  <li key={idx} className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                    <span className="truncate max-w-[150px]">{file.name}</span>
+                    <button type="button" onClick={() => removeAttachment(idx)} className="text-slate-400 hover:text-red-500">
+                      <X size={14} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 

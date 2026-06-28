@@ -25,7 +25,7 @@ export default function SortableTicketCard({
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   };
 
@@ -39,14 +39,10 @@ export default function SortableTicketCard({
       onActivate={onActivate}
       onCollapse={onCollapse}
       style={style}
-      dragHandleProps={
-        isExpanded
-          ? {
-              attributes,
-              listeners,
-            }
-          : undefined
-      }
+      dragHandleProps={{
+        attributes,
+        listeners,
+      }}
     />
   );
 }

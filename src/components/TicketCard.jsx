@@ -3,7 +3,6 @@ import {
   CalendarDays,
   ChevronUp,
   GripVertical,
-  Tag,
   UserRound,
   Wrench,
 } from "lucide-react";
@@ -28,13 +27,7 @@ const TicketCard = forwardRef(function TicketCard(
   const status = getStatus(statuses, ticket.status);
   const dragAttributes = dragHandleProps?.attributes ?? {};
   const dragListeners = dragHandleProps?.listeners ?? {};
-  const rootDragListeners = isExpanded
-    ? {
-        onMouseDown: dragListeners.onMouseDown,
-        onPointerDown: dragListeners.onPointerDown,
-        onTouchStart: dragListeners.onTouchStart,
-      }
-    : {};
+
 
   function handleActivate() {
     onActivate(ticket.id);
@@ -60,30 +53,33 @@ const TicketCard = forwardRef(function TicketCard(
   return (
     <article
       ref={ref}
-      className={`glass-card group w-full cursor-pointer rounded-xl text-left ${
-        isExpanded
+      className={`group min-w-0 w-full cursor-pointer rounded-xl text-left border shadow-sm ${
+        isOverlay 
+          ? "bg-white/95 dark:bg-slate-900/95 border-slate-300 dark:border-slate-700 shadow-2xl" 
+          : "glass-card"
+      } ${
+        isExpanded && !isOverlay
           ? "p-4 ring-1 ring-violet-500/20 dark:ring-violet-500/10"
-          : "px-3 py-2.5"
-      } ${isDragging ? "opacity-40" : "opacity-100"} ${isOverlay ? "shadow-xl" : ""}`}
+          : "p-4"
+      } ${isDragging ? "opacity-40" : "opacity-100"}`}
       {...dragAttributes}
-      {...rootDragListeners}
       onClick={handleActivate}
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       style={style}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold leading-5 text-slate-900 dark:text-slate-50">
-            {ticket.id}
+            {ticket.title ?? ticket.id}
           </p>
-          <p className="truncate text-sm leading-5 text-slate-500 dark:text-slate-400">
-            {ticket.userSnapshot?.name ?? ticket.user ?? "—"}
+          <p className="truncate text-xs leading-5 text-slate-500 dark:text-slate-400">
+            {ticket.id} &middot; {ticket.userSnapshot?.name ?? ticket.user ?? "—"}
           </p>
         </div>
         <div
-          className={`flex shrink-0 items-center gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`flex shrink-0 items-center gap-1 flex-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
             isExpanded ? "max-w-[100px] opacity-100" : "max-w-0 opacity-0"
           }`}
         >
@@ -102,8 +98,7 @@ const TicketCard = forwardRef(function TicketCard(
           </button>
           <span
             className="mt-0.5 flex h-8 w-8 cursor-grab items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition-all duration-200 hover:border-violet-300 hover:text-violet-500 active:cursor-grabbing dark:border-white/10 dark:bg-white/5 dark:text-slate-500 dark:hover:border-violet-500/40 dark:hover:text-violet-300"
-            onClick={stopDragFromControl}
-            onKeyDown={stopDragFromControl}
+            {...dragListeners}
             title="Arrastrar ticket"
           >
             <GripVertical size={17} aria-hidden="true" />
@@ -124,25 +119,26 @@ const TicketCard = forwardRef(function TicketCard(
 
           <div className="mt-4 grid gap-2 text-sm text-slate-600 dark:text-slate-300">
             <InfoRow icon={UserRound} value={ticket.userSnapshot?.name ?? ticket.user ?? "—"} />
-            <InfoRow icon={Building2} value={ticket.userSnapshot?.sector ?? ticket.sector ?? "—"} />
-            <InfoRow icon={Tag} value={ticket.deviceTag || "—"} />
+            <InfoRow icon={Building2} value={ticket.area ?? ticket.userSnapshot?.sector ?? ticket.sector ?? "—"} />
             <InfoRow icon={CalendarDays} value={formatDate(ticket.createdAt)} />
-            <InfoRow icon={Wrench} value={`${ticket.category} / ${ticket.subcategory}`} />
+            <InfoRow icon={Wrench} value={ticket.motivo || "—"} />
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <StatusBadge status={status} />
+          <div className="mt-4 flex items-center justify-between gap-2 overflow-hidden">
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="min-w-0 flex-shrink truncate">
+                <StatusBadge status={status} />
+              </div>
               {ticket.assignedTo && (
                 <div 
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-700 ring-2 ring-white dark:bg-white/10 dark:text-slate-200 dark:ring-slate-900" 
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-700 ring-2 ring-white dark:bg-white/10 dark:text-slate-200 dark:ring-slate-900" 
                   title={`Asignado a: ${ticket.assignedTo.name}`}
                 >
                   {ticket.assignedTo.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
                 </div>
               )}
             </div>
-            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">
+            <span className="truncate text-right text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500 shrink-0 ml-1">
               Click para ver detalle
             </span>
           </div>

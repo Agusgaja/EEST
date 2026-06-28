@@ -163,7 +163,7 @@ export default function AdminLayout() {
             </div>
           </div>
 
-          <main className="flex-1 overflow-y-scroll overflow-x-hidden h-full w-full">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden h-full w-full relative">
             <Outlet />
           </main>
         </div>

@@ -6,7 +6,7 @@ const TicketContext = createContext(null);
 
 // Cambiamos la clave al introducir un schema incompatible con la versión anterior.
 // Esto fuerza una recarga desde mockTickets y evita errores con datos viejos en localStorage.
-const STORAGE_KEY = "maintenance-tickets-v3";
+const STORAGE_KEY = "maintenance-tickets-v6";
 
 function loadTickets() {
   try {
@@ -39,7 +39,7 @@ export function TicketProvider({ children }) {
    * son responsabilidad exclusiva del contexto.
    */
   const addTicket = useCallback(
-    ({ category, subcategory, deviceTag, fullDescription, userId, userSnapshot, source }) => {
+    ({ title, area, motivo, fullDescription, attachments, userId, userSnapshot, source }) => {
       const id = generateTicketId(tickets);
       const now = new Date().toISOString();
 
@@ -47,11 +47,12 @@ export function TicketProvider({ children }) {
         id,
         source: source ?? "web",
         userId,
-        userSnapshot,                  // { name, sector, legajo }
-        category,
-        subcategory,
-        deviceTag: deviceTag?.trim() ?? "",
+        userSnapshot,                  // { name }
+        title: title?.trim() ?? "Sin título",
+        area,
+        motivo,
         fullDescription: fullDescription.trim(),
+        attachments: attachments || [],
         // shortDescription eliminado del schema — se deriva en render con getShortDescription()
         status: "pendiente",
         createdAt: now,
@@ -113,7 +114,7 @@ export function TicketProvider({ children }) {
    * Agrega una observación interna a un ticket.
    * Registra la entrada de historial con el actor real.
    */
-  const addObservation = useCallback((ticketId, text, author, authorId) => {
+  const addObservation = useCallback((ticketId, text, author, authorId, authorRole, attachments = []) => {
     const now = new Date().toISOString();
     setTickets((prev) =>
       prev.map((t) => {
@@ -126,7 +127,9 @@ export function TicketProvider({ children }) {
               id: `obs-${Date.now()}`,
               author: author ?? "Sistema",
               authorId: authorId ?? "system",
+              authorRole: authorRole ?? "usuario",
               text,
+              attachments,
               createdAt: now,
             },
           ],
@@ -193,17 +196,18 @@ export function TicketProvider({ children }) {
   /**
    * Edita campos de un ticket (solo mientras status === "pendiente").
    */
-  const editTicket = useCallback((ticketId, { category, subcategory, deviceTag, fullDescription }, actor, actorId) => {
+  const editTicket = useCallback((ticketId, { title, area, motivo, fullDescription, attachments }, actor, actorId) => {
     const now = new Date().toISOString();
     setTickets((prev) =>
       prev.map((t) => {
         if (t.id !== ticketId || t.status !== "pendiente") return t;
         return {
           ...t,
-          category,
-          subcategory,
-          deviceTag: deviceTag?.trim() ?? "",
+          title: title?.trim() ?? "Sin título",
+          area,
+          motivo,
           fullDescription: fullDescription.trim(),
+          attachments: attachments || [],
           history: [
             ...t.history,
             {

@@ -44,7 +44,7 @@ export default function KanbanColumn({
 
   return (
     <section
-      className={`flex min-h-[calc(100vh-230px)] min-w-[320px] max-w-[360px] flex-1 shrink-0 snap-center flex-col rounded-xl border transition-all duration-200 ${
+      className={`flex h-full min-w-[320px] max-w-[360px] shrink-0 snap-center flex-col rounded-xl border transition-all duration-200 ${
         COLUMN_ACCENTS[status.id] ?? "border-slate-200 dark:border-white/10"
       } ${
         isOver
@@ -74,12 +74,13 @@ export default function KanbanColumn({
         </span>
       </div>
 
-      <SortableContext
-        id={status.id}
-        items={tickets.map((ticket) => ticket.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        <div ref={setNodeRef} className="grid flex-1 content-start gap-2.5 p-3">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+        <SortableContext
+          id={status.id}
+          items={tickets.map((ticket) => ticket.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div ref={setNodeRef} className="grid content-start gap-2.5 p-3">
           {tickets.map((ticket) => (
             <SortableTicketCard
               key={ticket.id}
@@ -97,7 +98,8 @@ export default function KanbanColumn({
             </div>
           ) : null}
         </div>
-      </SortableContext>
+        </SortableContext>
+      </div>
     </section>
   );
 }

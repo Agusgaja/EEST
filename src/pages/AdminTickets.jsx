@@ -43,10 +43,8 @@ function ticketMatchesQuery(ticket, normalizedQuery) {
     ticket.id,
     ticket.userSnapshot?.name ?? ticket.user ?? "",
     ticket.userSnapshot?.sector ?? ticket.sector ?? "",
-    ticket.userSnapshot?.legajo ?? "",
-    ticket.category,
-    ticket.subcategory,
-    ticket.deviceTag,
+    ticket.area,
+    ticket.motivo,
     ticket.fullDescription,
     ticket.status,
   ]
@@ -140,12 +138,14 @@ export default function AdminTickets() {
     setColumns((prev) => moveTicketToColumn(prev, ticketId, newStatusId));
   }
 
-  function handleAddObservation(ticketId, text) {
+  function handleAddObservation(ticketId, text, attachments) {
     addObservation(
       ticketId,
       text,
       `${user.nombre} ${user.apellido}`,
       user.id,
+      user.role,
+      attachments
     );
   }
 
@@ -251,7 +251,7 @@ export default function AdminTickets() {
   }
 
   return (
-    <div className="flex w-full flex-col h-full">
+    <div className="absolute inset-0 flex w-full flex-col overflow-hidden">
       <DashboardHeader
         ticketCount={tickets.filter((t) => t.source === "whatsapp").length}
         query={query}
@@ -261,7 +261,7 @@ export default function AdminTickets() {
         onOpenMetrics={() => setShowMetrics(true)}
       />
 
-      <main className="mx-auto flex w-full max-w-[1480px] flex-col px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto flex w-full max-w-[1480px] flex-col px-4 py-6 sm:px-6 lg:px-8 flex-1 min-h-0">
         <section className="mb-6 flex flex-col gap-3 border-b border-slate-200/80 pb-5 transition-colors dark:border-white/[0.08] sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 flex-1 pr-4">
             <p className="truncate text-sm font-medium text-slate-500 dark:text-slate-400">Tablero operativo</p>
@@ -289,7 +289,7 @@ export default function AdminTickets() {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <section className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+          <section className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory flex-1 min-h-0">
             {TICKET_STATUSES.map((status) => (
               <KanbanColumn
                 key={status.id}

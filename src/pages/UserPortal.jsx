@@ -119,9 +119,6 @@ export default function UserPortal() {
                   <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                     {user?.nombre} {user?.apellido}
                   </p>
-                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                    {user?.sector}
-                  </p>
                 </div>
               </div>
             <button
@@ -159,9 +156,6 @@ export default function UserPortal() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <span className="rounded-md border border-slate-200/50 bg-white/40 px-2.5 py-1 text-xs font-medium text-slate-600 dark:border-white/10 dark:bg-slate-800/40 dark:text-slate-300">
-                Sector: {user?.sector}
-              </span>
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
             </div>
           </header>

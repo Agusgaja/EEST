@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useUsers } from "../context/UserContext.jsx";
-import { useSettings } from "../context/SettingsContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 
@@ -12,23 +11,17 @@ const inputClass =
 
 export default function RegisterPage() {
   // RegisterPage usa UserContext (fuente de verdad) + AuthContext (para auto-login)
-  // SettingsContext provee los sectores activos del sistema
   const { addUser } = useUsers();
   const { login } = useAuth();
-  const { sectors } = useSettings();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  // Solo se ofrecen sectores activos — si el admin desactiva uno, desaparece del registro
-  const activeSectors = sectors.filter((s) => s.estado === "Activo");
 
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
-    legajo: "",
     email: "",
     telefono: "",
-    sector: "",
     password: "",
     confirmPassword: "",
   });
@@ -45,7 +38,6 @@ export default function RegisterPage() {
     const errs = {};
     if (!form.nombre.trim()) errs.nombre = "El nombre es obligatorio.";
     if (!form.apellido.trim()) errs.apellido = "El apellido es obligatorio.";
-    if (!form.legajo.trim()) errs.legajo = "El legajo es obligatorio.";
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!form.email.trim()) errs.email = "El email es obligatorio.";
@@ -54,8 +46,6 @@ export default function RegisterPage() {
     const phoneRegex = /^[\+\d\s\-]{8,}$/;
     if (!form.telefono.trim()) errs.telefono = "El teléfono es obligatorio.";
     else if (!phoneRegex.test(form.telefono)) errs.telefono = "Mín. 8 caracteres.";
-
-    if (!form.sector) errs.sector = "Seleccioná un sector.";
 
     if (!form.password) errs.password = "La contraseña es obligatoria.";
     else if (form.password.length < 8) errs.password = "Mínimo 8 caracteres.";
@@ -80,17 +70,15 @@ export default function RegisterPage() {
       addUser({
         nombre: form.nombre.trim(),
         apellido: form.apellido.trim(),
-        legajo: form.legajo.trim(),
         email: form.email.trim(),
         telefono: form.telefono.trim(),
-        sector: form.sector,
         password: form.password,
         rol: "Usuario",
         role: "usuario",
       });
 
       // 2. Auto-login con las credenciales recién creadas
-      const result = login(form.legajo.trim(), form.password);
+      const result = login(form.email.trim(), form.password);
       if (result.success) {
         navigate("/dashboard");
       } else {
@@ -101,8 +89,7 @@ export default function RegisterPage() {
       // El addUser lanza errores con mensajes específicos (legajo/email/teléfono duplicado)
       // Intentamos identificar cuál campo causó el error
       const msg = err.message || "Ocurrió un error al crear la cuenta.";
-      if (msg.toLowerCase().includes("legajo")) setErrors({ legajo: msg });
-      else if (msg.toLowerCase().includes("email")) setErrors({ email: msg });
+      if (msg.toLowerCase().includes("email")) setErrors({ email: msg });
       else if (msg.toLowerCase().includes("teléfono")) setErrors({ telefono: msg });
       else setErrors({ _form: msg });
     } finally {
@@ -167,20 +154,6 @@ export default function RegisterPage() {
                 {errors.apellido && <p className="mt-1 text-xs text-red-500">{errors.apellido}</p>}
               </div>
 
-              {/* Legajo */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Legajo
-                </label>
-                <input
-                  className={inputClass}
-                  value={form.legajo}
-                  onChange={(e) => setField("legajo", e.target.value)}
-                  placeholder="Ej: EMP-4200"
-                />
-                {errors.legajo && <p className="mt-1 text-xs text-red-500">{errors.legajo}</p>}
-              </div>
-
               {/* Email */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -208,24 +181,6 @@ export default function RegisterPage() {
                   placeholder="+54 11 1234-5678"
                 />
                 {errors.telefono && <p className="mt-1 text-xs text-red-500">{errors.telefono}</p>}
-              </div>
-
-              {/* Sector */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Sector
-                </label>
-                <select
-                  className={inputClass}
-                  value={form.sector}
-                  onChange={(e) => setField("sector", e.target.value)}
-                >
-                  <option value="">Seleccioná tu sector</option>
-                  {activeSectors.map((s) => (
-                    <option key={s.id} value={s.name}>{s.name}</option>
-                  ))}
-                </select>
-                {errors.sector && <p className="mt-1 text-xs text-red-500">{errors.sector}</p>}
               </div>
 
               {/* Contraseña */}

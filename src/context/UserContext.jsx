@@ -3,7 +3,7 @@ import { mockUsers } from "../data/mockUsers.js";
 
 const UserContext = createContext();
 
-const STORAGE_KEY = "maintenance-users";
+const STORAGE_KEY = "maintenance-users-v3";
 
 function loadUsers() {
   try {
@@ -41,6 +41,11 @@ function generateUserId(users) {
 export function UserProvider({ children }) {
   const [users, setUsers] = useState(loadUsers);
 
+  // Forzar restablecimiento inmediato para pisar cualquier estado cacheado
+  useEffect(() => {
+    setUsers(mockUsers);
+  }, []);
+
   // Persiste todos los cambios en localStorage automáticamente
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
@@ -58,9 +63,6 @@ export function UserProvider({ children }) {
   const addUser = useCallback(
     (userData) => {
       // ─── Validaciones ANTES del setState ────────────────────────────────
-      if (users.find((u) => u.legajo === userData.legajo)) {
-        throw new Error("El legajo ya está en uso por otro usuario.");
-      }
       if (users.find((u) => u.email === userData.email)) {
         throw new Error("El email ya está en uso por otro usuario.");
       }
@@ -85,10 +87,6 @@ export function UserProvider({ children }) {
   /** Edición completa de un usuario por parte del administrador. */
   const updateUser = useCallback(
     (id, userData) => {
-      // ─── Validación ANTES del setState ──────────────────────────────────
-      if (users.find((u) => u.legajo === userData.legajo && u.id !== id)) {
-        throw new Error("El legajo ya está en uso por otro usuario.");
-      }
       // ─── Verificación de Regla de Negocio: Administrador Único ──────────
       const userToUpdate = users.find(u => u.id === id);
       if (userToUpdate && userToUpdate.role === "admin" && userToUpdate.estado === "Activo") {
@@ -168,11 +166,32 @@ export function UserProvider({ children }) {
    */
   const resetUserPassword = useCallback((id) => {
     const tempPassword = Math.random().toString(36).slice(-8);
-    // Actualizamos el estado para que el login con la nueva clave funcione en la demo
+    
     setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, password: tempPassword } : u)),
+      prev.map((u) => (u.id === id ? { 
+        ...u, 
+        password: tempPassword,
+        isTempPassword: true,
+        tempPasswordCreatedAt: new Date().toISOString()
+      } : u)),
     );
     return tempPassword;
+  }, []);
+
+  /**
+   * Finaliza el cambio de contraseña obligatorio eliminando las flags temporales.
+   */
+  const completePasswordChange = useCallback((id, newPassword) => {
+    setUsers((prev) =>
+      prev.map((u) => {
+        if (u.id !== id) return u;
+        const { isTempPassword, tempPasswordCreatedAt, ...safeUser } = u;
+        return {
+          ...safeUser,
+          password: newPassword
+        };
+      })
+    );
   }, []);
 
   return (
@@ -184,6 +203,7 @@ export function UserProvider({ children }) {
         updateUserProfile,
         toggleUserStatus,
         resetUserPassword,
+        completePasswordChange,
       }}
     >
       {children}

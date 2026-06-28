@@ -80,9 +80,8 @@ function SettingList({ title, description, items, type, onAdd, onEdit, onToggleS
 export default function AdminSettings() {
   const { theme, toggleTheme } = useTheme();
   const {
-    sectors, addSector, updateSector, toggleSectorStatus,
-    categories, addCategory, updateCategory, toggleCategoryStatus,
-    subcategories, addSubcategory, updateSubcategory, toggleSubcategoryStatus
+    areas, addArea, updateArea, toggleAreaStatus,
+    motivos, addMotivo, updateMotivo, toggleMotivoStatus
   } = useSettings();
 
   // Modals state
@@ -116,25 +115,20 @@ export default function AdminSettings() {
       confirmText: isActivating ? "Activar" : "Desactivar",
       isDanger: !isActivating,
       onConfirm: () => {
-        if (type === "Sector") toggleSectorStatus(item.id);
-        else if (type === "Categoría") toggleCategoryStatus(item.id);
-        else if (type === "Subcategoría") toggleSubcategoryStatus(item.id);
+        if (type === "Área") toggleAreaStatus(item.id);
+        else if (type === "Motivo") toggleMotivoStatus(item.id);
       }
     });
     setIsConfirmModalOpen(true);
   };
 
-  const handleSaveForm = (name, categoryName) => {
-    if (formType === "Sector") {
-      itemToEdit ? updateSector(itemToEdit.id, name) : addSector(name);
-    } else if (formType === "Categoría") {
-      itemToEdit ? updateCategory(itemToEdit.id, name) : addCategory(name);
-    } else if (formType === "Subcategoría") {
-      itemToEdit ? updateSubcategory(itemToEdit.id, name, categoryName) : addSubcategory(name, categoryName);
+  const handleSaveForm = (name) => {
+    if (formType === "Área") {
+      itemToEdit ? updateArea(itemToEdit.id, name) : addArea(name);
+    } else if (formType === "Motivo") {
+      itemToEdit ? updateMotivo(itemToEdit.id, name) : addMotivo(name);
     }
   };
-
-  const activeCategories = categories.filter(c => c.estado === "Activo");
 
   return (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col px-4 py-8 sm:px-6 lg:px-8 h-full">
@@ -144,38 +138,28 @@ export default function AdminSettings() {
             Configuración del Sistema
           </h1>
           <p className="truncate mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Administra los sectores, categorías y subcategorías disponibles en el sistema.
+          Administra las áreas y motivos disponibles en el sistema.
           </p>
         </div>
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
-      <div className="grid flex-1 gap-6 md:grid-cols-3">
+      <div className="grid flex-1 gap-6 md:grid-cols-2">
         <SettingList 
-          title="Sectores" 
-          description="Áreas operativas de la empresa."
-          items={sectors}
-          type="Sector"
+          title="Áreas" 
+          description="Aulas, oficinas o sectores de la escuela."
+          items={areas}
+          type="Área"
           onAdd={handleAdd}
           onEdit={handleEdit}
           onToggleStatus={handleToggleStatus}
         />
         
         <SettingList 
-          title="Categorías" 
-          description="Clasificación principal de tickets."
-          items={categories}
-          type="Categoría"
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          onToggleStatus={handleToggleStatus}
-        />
-        
-        <SettingList 
-          title="Subcategorías" 
-          description="Tipos específicos de problemas."
-          items={subcategories}
-          type="Subcategoría"
+          title="Motivos" 
+          description="Motivos o categorías de los problemas."
+          items={motivos}
+          type="Motivo"
           onAdd={handleAdd}
           onEdit={handleEdit}
           onToggleStatus={handleToggleStatus}
@@ -188,7 +172,6 @@ export default function AdminSettings() {
         type={formType}
         initialData={itemToEdit}
         onSave={handleSaveForm}
-        categories={activeCategories}
       />
 
       <ConfirmModal

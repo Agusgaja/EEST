@@ -107,11 +107,11 @@ export default function TecnicoTickets() {
                 <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                   <div className="flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-teal-400"></span>
-                    {ticket.category}
+                    {ticket.motivo}
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-                    {ticket.userSnapshot?.sector || "Sin sector"}
+                    {ticket.area ?? ticket.userSnapshot?.sector ?? ticket.sector ?? "Sin área"}
                   </div>
                 </div>
               </button>

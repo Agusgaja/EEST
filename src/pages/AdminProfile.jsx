@@ -124,14 +124,6 @@ export default function AdminProfile() {
                   {user?.nombre} {user?.apellido}
                 </div>
               </div>
-              <div>
-                <label className={readonlyLabelClass}>Legajo</label>
-                <div className={`mt-1 ${readonlyClass}`}>{user?.legajo}</div>
-              </div>
-              <div className="sm:col-span-2">
-                <label className={readonlyLabelClass}>Sector</label>
-                <div className={`mt-1 ${readonlyClass}`}>{user?.sector}</div>
-              </div>
             </div>
           </div>
         </div>

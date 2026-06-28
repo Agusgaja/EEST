@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { X, Check } from "lucide-react";
 
-export default function SettingFormModal({ isOpen, onClose, type, initialData, onSave, categories = [] }) {
+export default function SettingFormModal({ isOpen, onClose, type, initialData, onSave }) {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
   const [error, setError] = useState("");
 
   const isEdit = Boolean(initialData);
@@ -11,7 +10,6 @@ export default function SettingFormModal({ isOpen, onClose, type, initialData, o
   useEffect(() => {
     if (isOpen) {
       setName(initialData?.name || "");
-      setCategory(initialData?.category || "");
       setError("");
     }
   }, [isOpen, initialData]);
@@ -27,13 +25,8 @@ export default function SettingFormModal({ isOpen, onClose, type, initialData, o
       return;
     }
 
-    if (type === "Subcategoría" && !category.trim()) {
-      setError("Debe seleccionar una categoría padre.");
-      return;
-    }
-
     try {
-      onSave(name.trim(), type === "Subcategoría" ? category.trim() : undefined);
+      onSave(name.trim());
       onClose();
     } catch (err) {
       setError(err.message);
@@ -74,25 +67,9 @@ export default function SettingFormModal({ isOpen, onClose, type, initialData, o
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={`Ej: ${type === "Sector" ? "Mantenimiento" : type === "Categoría" ? "Eléctrico" : "Toma Corriente"}`}
+                placeholder={`Ej: ${type === "Área" ? "AULA 1" : "RED"}`}
               />
             </div>
-
-            {type === "Subcategoría" && (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Categoría Padre</label>
-                <select
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="">Seleccione una categoría</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
           </div>
 
           <div className="mt-8 flex justify-end gap-3">

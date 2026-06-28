@@ -2,45 +2,29 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const SettingsContext = createContext();
 
-const initialSectors = [
-  { id: 1, name: "Producción", estado: "Activo" },
-  { id: 2, name: "Compras", estado: "Activo" },
-  { id: 3, name: "Ventas", estado: "Activo" },
-  { id: 4, name: "Calidad", estado: "Activo" },
-  { id: 5, name: "Logística", estado: "Activo" },
-  { id: 6, name: "Administración", estado: "Activo" },
-  { id: 7, name: "Recursos Humanos", estado: "Activo" },
-  { id: 8, name: "Sistemas e Infraestructura", estado: "Activo" },
-  { id: 9, name: "Mantenimiento", estado: "Activo" },
+const initialAreas = [
+  { id: 1, name: "AULA 1", estado: "Activo" },
+  { id: 2, name: "AULA 2", estado: "Activo" },
+  { id: 3, name: "AULA 3", estado: "Activo" },
+  { id: 4, name: "AULA 4", estado: "Activo" },
+  { id: 5, name: "DIRECCION", estado: "Activo" },
+  { id: 6, name: "VICEDIRECCION", estado: "Activo" },
+  { id: 7, name: "PRECEPTORIA", estado: "Activo" }
 ];
 
-const initialCategories = [
-  { id: 1, name: "Infraestructura", estado: "Activo" },
-  { id: 2, name: "Periféricos", estado: "Activo" },
-  { id: 3, name: "PC / Monitor", estado: "Activo" },
-  { id: 4, name: "Eléctrico", estado: "Activo" },
-  { id: 5, name: "Mecánico", estado: "Activo" },
-  { id: 6, name: "Climatización", estado: "Activo" },
-  { id: 7, name: "Sanitario", estado: "Activo" },
-  { id: 8, name: "Equipo", estado: "Activo" },
-  { id: 9, name: "Mobiliario", estado: "Activo" },
-  { id: 10, name: "Herramientas", estado: "Activo" },
-  { id: 11, name: "Iluminación", estado: "Activo" },
-  { id: 12, name: "Seguridad", estado: "Activo" },
-  { id: 13, name: "Otro", estado: "Activo" }
+const initialMotivos = [
+  { id: 1, name: "PROGRAMAS O APLICACIONES", estado: "Activo" },
+  { id: 2, name: "RED", estado: "Activo" },
+  { id: 3, name: "CPU", estado: "Activo" },
+  { id: 4, name: "MONITOR", estado: "Activo" },
+  { id: 5, name: "IMPRESORAS", estado: "Activo" },
+  { id: 6, name: "CORREO ELECTRONICO", estado: "Activo" },
+  { id: 7, name: "MOUSE O TECLADO", estado: "Activo" },
+  { id: 8, name: "TONER", estado: "Activo" },
+  { id: 9, name: "USUARIOS Y CLAVES DEL SISTEMA", estado: "Activo" }
 ];
 
-const initialSubcategories = [
-  { id: 1, name: "Mouse", category: "Periféricos", estado: "Activo" },
-  { id: 2, name: "Teclado", category: "Periféricos", estado: "Activo" },
-  { id: 3, name: "Monitor", category: "PC / Monitor", estado: "Activo" },
-  { id: 4, name: "Portón", category: "Infraestructura", estado: "Activo" },
-  { id: 5, name: "Toma corriente", category: "Eléctrico", estado: "Activo" },
-  { id: 6, name: "Cinta transportadora", category: "Mecánico", estado: "Activo" },
-  { id: 7, name: "Aire Acondicionado", category: "Climatización", estado: "Activo" }
-];
-
-const SETTINGS_KEY = "maintenance-settings";
+const SETTINGS_KEY = "maintenance-settings-v2";
 
 function loadSettings() {
   try {
@@ -54,90 +38,59 @@ function loadSettings() {
 
 export function SettingsProvider({ children }) {
   const stored = loadSettings();
-  const [sectors, setSectors] = useState(stored?.sectors ?? initialSectors);
-  const [categories, setCategories] = useState(stored?.categories ?? initialCategories);
-  const [subcategories, setSubcategories] = useState(stored?.subcategories ?? initialSubcategories);
+  const [areas, setAreas] = useState(stored?.areas ?? initialAreas);
+  const [motivos, setMotivos] = useState(stored?.motivos ?? initialMotivos);
 
   // Persiste automáticamente cualquier cambio en localStorage
   useEffect(() => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sectors, categories, subcategories }));
-  }, [sectors, categories, subcategories]);
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ areas, motivos }));
+  }, [areas, motivos]);
 
-  // --- Sectors CRUD ---
-  const addSector = (name) => {
-    if (sectors.find(s => s.name.toLowerCase() === name.toLowerCase())) {
-      throw new Error("El sector ya existe.");
+  // --- Areas CRUD ---
+  const addArea = (name) => {
+    if (areas.find(a => a.name.toLowerCase() === name.toLowerCase())) {
+      throw new Error("El área ya existe.");
     }
-    const newSector = { id: Date.now(), name, estado: "Activo" };
-    setSectors([...sectors, newSector]);
+    const newArea = { id: Date.now(), name, estado: "Activo" };
+    setAreas([...areas, newArea]);
   };
 
-  const updateSector = (id, name) => {
-    if (sectors.find(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) {
-      throw new Error("El sector ya existe.");
+  const updateArea = (id, name) => {
+    if (areas.find(a => a.name.toLowerCase() === name.toLowerCase() && a.id !== id)) {
+      throw new Error("El área ya existe.");
     }
-    setSectors(sectors.map(s => s.id === id ? { ...s, name } : s));
+    setAreas(areas.map(a => a.id === id ? { ...a, name } : a));
   };
 
-  const toggleSectorStatus = (id) => {
-    setSectors(sectors.map(s => s.id === id ? { ...s, estado: s.estado === "Activo" ? "Inactivo" : "Activo" } : s));
+  const toggleAreaStatus = (id) => {
+    setAreas(areas.map(a => a.id === id ? { ...a, estado: a.estado === "Activo" ? "Inactivo" : "Activo" } : a));
   };
 
-  // --- Categories CRUD ---
-  const addCategory = (name) => {
-    if (categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
-      throw new Error("La categoría ya existe.");
+  // --- Motivos CRUD ---
+  const addMotivo = (name) => {
+    if (motivos.find(m => m.name.toLowerCase() === name.toLowerCase())) {
+      throw new Error("El motivo ya existe.");
     }
-    const newCategory = { id: Date.now(), name, estado: "Activo" };
-    setCategories([...categories, newCategory]);
+    const newMotivo = { id: Date.now(), name, estado: "Activo" };
+    setMotivos([...motivos, newMotivo]);
   };
 
-  const updateCategory = (id, name) => {
-    if (categories.find(c => c.name.toLowerCase() === name.toLowerCase() && c.id !== id)) {
-      throw new Error("La categoría ya existe.");
+  const updateMotivo = (id, name) => {
+    if (motivos.find(m => m.name.toLowerCase() === name.toLowerCase() && m.id !== id)) {
+      throw new Error("El motivo ya existe.");
     }
-    setCategories(categories.map(c => c.id === id ? { ...c, name } : c));
-    
-    // Si actualizamos el nombre de una categoría, también actualizamos el string de referencia en las subcategorías.
-    // (En una BD real usaríamos el category_id como FK, pero acá guardamos el string).
-    const categoryNameBefore = categories.find(c => c.id === id)?.name;
-    if (categoryNameBefore && categoryNameBefore !== name) {
-      setSubcategories(prev => prev.map(sub => 
-        sub.category === categoryNameBefore ? { ...sub, category: name } : sub
-      ));
-    }
+    setMotivos(motivos.map(m => m.id === id ? { ...m, name } : m));
   };
 
-  const toggleCategoryStatus = (id) => {
-    setCategories(categories.map(c => c.id === id ? { ...c, estado: c.estado === "Activo" ? "Inactivo" : "Activo" } : c));
-  };
-
-  // --- Subcategories CRUD ---
-  const addSubcategory = (name, categoryName) => {
-    if (subcategories.find(s => s.name.toLowerCase() === name.toLowerCase() && s.category === categoryName)) {
-      throw new Error("La subcategoría ya existe en esta categoría.");
-    }
-    const newSubcat = { id: Date.now(), name, category: categoryName, estado: "Activo" };
-    setSubcategories([...subcategories, newSubcat]);
-  };
-
-  const updateSubcategory = (id, name, categoryName) => {
-    if (subcategories.find(s => s.name.toLowerCase() === name.toLowerCase() && s.category === categoryName && s.id !== id)) {
-      throw new Error("La subcategoría ya existe en esta categoría.");
-    }
-    setSubcategories(subcategories.map(s => s.id === id ? { ...s, name, category: categoryName } : s));
-  };
-
-  const toggleSubcategoryStatus = (id) => {
-    setSubcategories(subcategories.map(s => s.id === id ? { ...s, estado: s.estado === "Activo" ? "Inactivo" : "Activo" } : s));
+  const toggleMotivoStatus = (id) => {
+    setMotivos(motivos.map(m => m.id === id ? { ...m, estado: m.estado === "Activo" ? "Inactivo" : "Activo" } : m));
   };
 
   return (
     <SettingsContext.Provider
       value={{
-        sectors, addSector, updateSector, toggleSectorStatus,
-        categories, addCategory, updateCategory, toggleCategoryStatus,
-        subcategories, addSubcategory, updateSubcategory, toggleSubcategoryStatus
+        areas, addArea, updateArea, toggleAreaStatus,
+        motivos, addMotivo, updateMotivo, toggleMotivoStatus
       }}
     >
       {children}

@@ -5,7 +5,6 @@ import { TicketProvider } from "./context/TicketContext.jsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import UserPortal from "./pages/UserPortal.jsx";
 import DashboardHome from "./pages/DashboardHome.jsx";
 import CreateTicketPage from "./pages/CreateTicketPage.jsx";
@@ -17,6 +16,7 @@ import AdminTickets from "./pages/AdminTickets.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminSettings from "./pages/AdminSettings.jsx";
 import AdminProfile from "./pages/AdminProfile.jsx";
+import ReportPrintView from "./pages/ReportPrintView.jsx";
 import TecnicoLayout from "./pages/TecnicoLayout.jsx";
 import TecnicoTickets from "./pages/TecnicoTickets.jsx";
 import TecnicoProfile from "./pages/TecnicoProfile.jsx";
@@ -42,7 +42,6 @@ export default function App() {
                   <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
                     <Route
                       path="/dashboard"
@@ -57,6 +56,15 @@ export default function App() {
                       <Route path="my-tickets" element={<MyTicketsPage />} />
                       <Route path="profile" element={<ProfilePage />} />
                     </Route>
+
+                    <Route
+                      path="/admin/report"
+                      element={
+                        <ProtectedRoute role="admin">
+                          <ReportPrintView />
+                        </ProtectedRoute>
+                      }
+                    />
 
                     <Route
                       path="/admin"
