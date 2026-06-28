@@ -34,7 +34,7 @@ export default function ProfilePage() {
   const [savingPassword, setSavingPassword] = useState(false);
 
   // ── Handler: guardar datos de contacto ────────────────────────────
-  function handleSaveContact(e) {
+  async function handleSaveContact(e) {
     e.preventDefault();
     const errs = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,7 +51,7 @@ export default function ProfilePage() {
 
     try {
       // 1. Actualiza en la lista persistida de UserContext
-      updateUserProfile(user.id, { email, telefono });
+      await updateUserProfile(user.id, { email, telefono });
       // 2. Actualiza reactivamente el objeto de sesión de AuthContext
       updateSession({ email, telefono });
       showToast("Datos de contacto actualizados correctamente.", "success");
@@ -61,17 +61,9 @@ export default function ProfilePage() {
   }
 
   // ── Handler: cambiar contraseña ───────────────────────────────────
-  function handleSavePassword(e) {
+  async function handleSavePassword(e) {
     e.preventDefault();
     const errs = {};
-
-    // Verificamos la contraseña actual contra el registro en UserContext
-    const userRecord = users.find((u) => u.id === user.id);
-    if (!currentPassword) {
-      errs.currentPassword = "Ingresá tu contraseña actual.";
-    } else if (userRecord?.password !== currentPassword) {
-      errs.currentPassword = "La contraseña actual es incorrecta.";
-    }
 
     if (!newPassword) errs.newPassword = "Ingresá una nueva contraseña.";
     else if (newPassword.length < 8) errs.newPassword = "La contraseña debe tener al menos 8 caracteres.";
@@ -83,7 +75,7 @@ export default function ProfilePage() {
     if (Object.keys(errs).length > 0) return;
 
     try {
-      updateUserProfile(user.id, { email: user.email, telefono: user.telefono, password: newPassword });
+      await updateUserProfile(user.id, { email: user.email, telefono: user.telefono, password: newPassword });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

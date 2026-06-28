@@ -18,10 +18,10 @@ export default function LoginPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError("");
-    const result = login(identifier, password);
+    const result = await login(identifier, password);
     if (!result.success) {
       setError(result.error);
       return;
@@ -40,7 +40,7 @@ export default function LoginPage() {
     }
   }
 
-  function handlePasswordChangeSubmit(event) {
+  async function handlePasswordChangeSubmit(event) {
     event.preventDefault();
     setError("");
 
@@ -54,7 +54,7 @@ export default function LoginPage() {
       return;
     }
 
-    const safeUser = completeTempLogin(tempUserId, newPassword);
+    const safeUser = await completeTempLogin(tempUserId, newPassword);
     if (!safeUser) {
       setError("Ocurrió un error al actualizar la contraseña.");
       return;

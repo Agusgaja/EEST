@@ -57,7 +57,7 @@ export default function RegisterPage() {
     return errs;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     setErrors(errs);
@@ -78,7 +78,7 @@ export default function RegisterPage() {
       });
 
       // 2. Auto-login con las credenciales recién creadas
-      const result = login(form.email.trim(), form.password);
+      const result = await login(form.email.trim(), form.password);
       if (result.success) {
         navigate("/dashboard");
       } else {

@@ -32,7 +32,7 @@ export default function TecnicoProfile() {
   const [passwordErrors, setPasswordErrors] = useState({});
 
   // ── Handler: guardar datos de contacto ────────────────────────────
-  function handleSaveContact(e) {
+  async function handleSaveContact(e) {
     e.preventDefault();
     const errs = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +48,7 @@ export default function TecnicoProfile() {
     if (Object.keys(errs).length > 0) return;
 
     try {
-      updateUserProfile(user.id, { email, telefono });
+      await updateUserProfile(user.id, { email, telefono });
       updateSession({ email, telefono });
       showToast("Datos de contacto actualizados correctamente.", "success");
     } catch (err) {
@@ -57,16 +57,9 @@ export default function TecnicoProfile() {
   }
 
   // ── Handler: cambiar contraseña ───────────────────────────────────
-  function handleSavePassword(e) {
+  async function handleSavePassword(e) {
     e.preventDefault();
     const errs = {};
-
-    const userRecord = users.find((u) => u.id === user.id);
-    if (!currentPassword) {
-      errs.currentPassword = "Ingresá tu contraseña actual.";
-    } else if (userRecord?.password !== currentPassword) {
-      errs.currentPassword = "La contraseña actual es incorrecta.";
-    }
 
     if (!newPassword) errs.newPassword = "Ingresá una nueva contraseña.";
     else if (newPassword.length < 8) errs.newPassword = "Mínimo 8 caracteres.";
@@ -79,7 +72,7 @@ export default function TecnicoProfile() {
     if (Object.keys(errs).length > 0) return;
 
     try {
-      updateUserProfile(user.id, { email: user.email, telefono: user.telefono, password: newPassword });
+      await updateUserProfile(user.id, { email: user.email, telefono: user.telefono, password: newPassword });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

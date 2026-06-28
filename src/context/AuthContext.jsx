@@ -1,115 +1,124 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { useUsers } from "./UserContext.jsx";
+import { supabase } from "../lib/supabase.js";
 
 const AuthContext = createContext(null);
 
-const SESSION_KEY = "maintenance-session";
-
 export function AuthProvider({ children }) {
-  // AuthContext ya no gestiona su propia lista de usuarios.
-  // Delega en UserContext, que es la única fuente de verdad.
-  const { users, completePasswordChange } = useUsers();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem(SESSION_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
+  const fetchUserProfile = async (userId) => {
+    const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
+    if (!error && data) {
+      setUser(data);
     }
-  });
+    setLoading(false);
+  };
 
-  // Sincroniza la sesión con localStorage cada vez que cambia
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(SESSION_KEY);
-    }
-  }, [user]);
-
-  /**
-   * Sincronización automática: cuando los datos del usuario autenticado cambian
-   * en UserContext (por edición de perfil, cambio de rol, etc.), la sesión se
-   * actualiza automáticamente sin requerir una llamada explícita a updateSession.
-   * Esto elimina el contrato implícito que existía antes.
-   */
-  useEffect(() => {
-    if (!user) return;
-    const freshUser = users.find((u) => u.id === user.id);
-    if (!freshUser) return;
-    const { password: _, ...safeUser } = freshUser;
-    // Solo actualiza si hay un cambio real (comparación superficial por string)
-    if (JSON.stringify(safeUser) !== JSON.stringify(user)) {
-      setUser(safeUser);
-    }
-  }, [users]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  /**
-   * Autentica al usuario buscando en la lista de UserContext.
-   * Valida credenciales y que la cuenta esté activa.
-   */
-  const login = useCallback(
-    (identifier, password) => {
-      const ident = identifier.trim().toLowerCase();
-      const found = users.find(
-        (u) =>
-          u.email.toLowerCase() === ident &&
-          u.password === password,
-      );
-
-      if (!found) return { success: false, error: "Credenciales inválidas" };
-      if (found.estado === "Inactivo") {
-        return { success: false, error: "Esta cuenta está desactivada. Contacte al administrador." };
+    // Obtener sesión actual al montar
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
+    });
 
-      if (found.isTempPassword) {
-        const createdAt = new Date(found.tempPasswordCreatedAt).getTime();
-        const now = Date.now();
-        const hoursPassed = (now - createdAt) / (1000 * 60 * 60);
-
-        if (hoursPassed > 24) {
-          return { success: false, error: "La contraseña temporal ha expirado. Solicite una nueva al administrador." };
-        }
-        
-        return { success: true, requirePasswordChange: true, tempUserId: found.id };
+    // Escuchar cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+      } else {
+        setUser(null);
+        setLoading(false);
       }
+    });
 
-      // Nunca guardamos la contraseña en la sesión
-      const { password: _, ...safeUser } = found;
-      setUser(safeUser);
-      return { success: true, user: safeUser };
-    },
-    [users],
-  );
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const completeTempLogin = useCallback((tempUserId, newPassword) => {
-    completePasswordChange(tempUserId, newPassword);
-    const userToLogin = users.find(u => u.id === tempUserId);
-    if (userToLogin) {
-      const { password: _, isTempPassword, tempPasswordCreatedAt, ...safeUser } = userToLogin;
-      setUser(safeUser);
-      return safeUser;
+  const login = useCallback(async (identifier, password) => {
+    const email = identifier.trim().toLowerCase();
+    
+    // Iniciar sesión con Supabase Auth
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: "Credenciales inválidas" };
     }
-    return null;
-  }, [completePasswordChange, users]);
 
-  const logout = useCallback(() => {
+    // Cargar el perfil desde la tabla users
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profileError || !profile) {
+      await supabase.auth.signOut();
+      return { success: false, error: "Error al cargar el perfil del usuario" };
+    }
+
+    if (profile.estado === "Inactivo") {
+      await supabase.auth.signOut();
+      return { success: false, error: "Esta cuenta está desactivada. Contacte al administrador." };
+    }
+
+    if (profile.isTempPassword) {
+      const createdAt = new Date(profile.tempPasswordCreatedAt).getTime();
+      const now = Date.now();
+      const hoursPassed = (now - createdAt) / (1000 * 60 * 60);
+
+      if (hoursPassed > 24) {
+        await supabase.auth.signOut();
+        return { success: false, error: "La contraseña temporal ha expirado. Solicite una nueva al administrador." };
+      }
+      
+      return { success: true, requirePasswordChange: true, tempUserId: data.user.id };
+    }
+
+    setUser(profile);
+    return { success: true, user: profile };
+  }, []);
+
+  const completeTempLogin = useCallback(async (tempUserId, newPassword) => {
+    // 1. Actualizar contraseña en Supabase Auth
+    const { error: authError } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (authError) return null;
+
+    // 2. Limpiar flags temporales en la tabla users
+    const { data: updatedProfile, error: dbError } = await supabase
+      .from('users')
+      .update({ isTempPassword: false, tempPasswordCreatedAt: null })
+      .eq('id', tempUserId)
+      .select()
+      .single();
+
+    if (dbError || !updatedProfile) return null;
+
+    setUser(updatedProfile);
+    return updatedProfile;
+  }, []);
+
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
   }, []);
 
-  /**
-   * @deprecated Mantenida por compatibilidad con componentes existentes.
-   * La sincronización ahora es automática vía useEffect cuando cambia UserContext.
-   * Puede eliminarse en la próxima limpieza de API.
-   */
   const updateSession = useCallback((fields) => {
     setUser((prev) => (prev ? { ...prev, ...fields } : prev));
   }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, updateSession, completeTempLogin }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
