@@ -48,13 +48,13 @@ export default function KanbanColumn({
         COLUMN_ACCENTS[status.id] ?? "border-slate-200 dark:border-white/10"
       } ${
         isOver
-          ? "bg-violet-50/80 dark:bg-violet-500/5 shadow-[0_0_20px_rgba(124,58,237,0.12)]"
+          ? "bg-sky-50/80 dark:bg-sky-500/5 shadow-[0_0_20px_rgba(124,58,237,0.12)]"
           : "bg-white/60 dark:bg-white/[0.02] backdrop-blur-2xl"
       }`}
     >
       <div className={`flex min-h-14 items-center justify-between border-b px-4 ${
         isOver
-          ? "border-violet-200 dark:border-violet-500/20"
+          ? "border-sky-200 dark:border-sky-500/20"
           : "border-slate-200/80 dark:border-white/[0.07]"
       }`}>
         <div className="min-w-0">

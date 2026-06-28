@@ -5,7 +5,7 @@ import { useUsers } from "../context/UserContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
 
 const inputClass =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none focus:ring-1 focus:ring-violet-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50";
 const readonlyClass =
   "w-full rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2.5 text-sm text-slate-600 dark:border-white/5 dark:bg-white/[0.03] dark:text-slate-400";
 const labelClass = "mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300";
@@ -110,7 +110,7 @@ export default function ProfilePage() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className={sectionHeaderClass}>
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <UserIcon size={18} className="text-violet-500" />
+              <UserIcon size={18} className="text-sky-500" />
               Información Corporativa
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -135,7 +135,7 @@ export default function ProfilePage() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className={sectionHeaderClass}>
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Mail size={18} className="text-violet-500" />
+              <Mail size={18} className="text-sky-500" />
               Datos de Contacto
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -170,7 +170,7 @@ export default function ProfilePage() {
               <button
                 type="submit"
                 disabled={savingContact}
-                className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-violet-500/20 transition-colors hover:bg-violet-500 disabled:opacity-60"
+                className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-sky-500/20 transition-colors hover:bg-sky-500 disabled:opacity-60"
               >
                 Guardar cambios
               </button>
@@ -182,7 +182,7 @@ export default function ProfilePage() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className={sectionHeaderClass}>
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Lock size={18} className="text-violet-500" />
+              <Lock size={18} className="text-sky-500" />
               Seguridad
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -244,7 +244,7 @@ export default function ProfilePage() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className={sectionHeaderClass}>
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Shield size={18} className="text-violet-500" />
+              <Shield size={18} className="text-sky-500" />
               Rol en el Sistema
             </h3>
           </div>

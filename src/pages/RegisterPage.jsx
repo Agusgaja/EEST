@@ -7,7 +7,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 
 const inputClass =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50";
 
 export default function RegisterPage() {
   // RegisterPage usa UserContext (fuente de verdad) + AuthContext (para auto-login)
@@ -106,7 +106,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-700 to-red-600 text-white shadow-lg shadow-red-600/20">
               <ClipboardList size={26} aria-hidden="true" />
             </div>
             <h1 className="mt-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
@@ -219,7 +219,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-6 w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="mt-6 w-full rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? "Creando cuenta..." : "Crear cuenta"}
             </button>
@@ -228,7 +228,7 @@ export default function RegisterPage() {
               ¿Ya tenés cuenta?{" "}
               <Link
                 to="/login"
-                className="font-medium text-violet-600 underline-offset-2 transition-colors hover:underline dark:text-violet-400"
+                className="font-medium text-sky-600 underline-offset-2 transition-colors hover:underline dark:text-sky-400"
               >
                 Iniciar sesión
               </Link>

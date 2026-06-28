@@ -29,7 +29,7 @@ export default function PasswordModal({ isOpen, onClose, password, userName }) {
         role="dialog"
       >
         <div className="p-6">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
             <KeyRound size={24} />
           </div>
           
@@ -38,7 +38,7 @@ export default function PasswordModal({ isOpen, onClose, password, userName }) {
             La nueva contraseña temporal para <strong>{userName}</strong> ha sido generada con éxito. Por favor copiala ahora.
           </p>
 
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/20 mb-6 group transition-colors hover:border-violet-300 dark:hover:border-violet-500/30">
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/20 mb-6 group transition-colors hover:border-sky-300 dark:hover:border-sky-500/30">
             <span className="font-mono text-lg font-medium text-slate-800 dark:text-slate-200 tracking-wider">
               {password}
             </span>
@@ -47,7 +47,7 @@ export default function PasswordModal({ isOpen, onClose, password, userName }) {
               className={`flex items-center justify-center rounded-lg p-2 transition-all ${
                 copied 
                   ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" 
-                  : "bg-white text-slate-500 shadow-sm hover:bg-violet-50 hover:text-violet-600 dark:bg-white/5 dark:text-slate-400 dark:hover:bg-violet-500/20 dark:hover:text-violet-400"
+                  : "bg-white text-slate-500 shadow-sm hover:bg-sky-50 hover:text-sky-600 dark:bg-white/5 dark:text-slate-400 dark:hover:bg-sky-500/20 dark:hover:text-sky-400"
               }`}
               title="Copiar al portapapeles"
             >
@@ -57,7 +57,7 @@ export default function PasswordModal({ isOpen, onClose, password, userName }) {
 
           <button
             onClick={onClose}
-            className="w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-violet-500/20 transition-colors hover:bg-violet-500"
+            className="w-full rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-sky-500/20 transition-colors hover:bg-sky-500"
           >
             Cerrar
           </button>

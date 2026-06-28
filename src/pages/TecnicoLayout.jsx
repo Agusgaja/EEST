@@ -56,7 +56,7 @@ export default function TecnicoLayout() {
               className="flex items-center cursor-pointer flex-1"
               onClick={() => window.innerWidth >= 768 && setIsCollapsed(!isCollapsed)}
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-700 to-red-600 text-white shadow-lg shadow-red-600/20">
                 <ClipboardList size={22} aria-hidden="true" />
               </div>
               <div className={`overflow-hidden transition-all duration-300 ease-in-out flex items-center ${(isCollapsed && !isMobileOpen) ? 'md:w-0 md:opacity-0' : 'w-full opacity-100 ml-3'}`}>
@@ -85,7 +85,7 @@ export default function TecnicoLayout() {
                 className={({ isActive }) =>
                   `group relative flex items-center rounded-lg py-2.5 px-4 text-sm font-medium transition-all duration-200 border border-transparent ${
                     isActive
-                      ? "bg-violet-100/50 text-violet-700 dark:border-violet-500/20 dark:bg-violet-600/20 dark:text-violet-300"
+                      ? "bg-sky-100/50 text-sky-700 dark:border-sky-500/20 dark:bg-sky-600/20 dark:text-sky-300"
                       : "text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
                   }`
                 }
@@ -149,7 +149,7 @@ export default function TecnicoLayout() {
               </button>
               <span className="font-semibold text-slate-900 dark:text-slate-100">Mantenimiento</span>
             </div>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-700 to-red-600 text-white shadow-lg shadow-red-600/20">
               <ClipboardList size={18} />
             </div>
           </div>

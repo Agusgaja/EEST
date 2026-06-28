@@ -7,7 +7,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 
 const inputClass =
-  "block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:focus:border-violet-500";
+  "block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:focus:border-sky-500";
 const readonlyClass =
   "flex w-full items-center rounded-lg border border-slate-200/50 bg-slate-100/50 px-3 py-2.5 text-sm text-slate-700 dark:border-white/5 dark:bg-white/5 dark:text-slate-300";
 const labelClass = "block text-sm font-medium text-slate-700 dark:text-slate-300";
@@ -109,7 +109,7 @@ export default function AdminProfile() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className="border-b border-slate-200/50 bg-slate-50/50 px-6 py-4 dark:border-white/10 dark:bg-white/5">
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <UserIcon size={18} className="text-violet-500" />
+              <UserIcon size={18} className="text-sky-500" />
               Información Corporativa
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -132,7 +132,7 @@ export default function AdminProfile() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className="border-b border-slate-200/50 bg-slate-50/50 px-6 py-4 dark:border-white/10 dark:bg-white/5">
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Mail size={18} className="text-violet-500" />
+              <Mail size={18} className="text-sky-500" />
               Datos de Contacto
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -182,7 +182,7 @@ export default function AdminProfile() {
             <div className="mt-6 flex justify-end">
               <button
                 type="submit"
-                className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-violet-500/20 transition-colors hover:bg-violet-500"
+                className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-sky-500/20 transition-colors hover:bg-sky-500"
               >
                 Guardar cambios
               </button>
@@ -194,7 +194,7 @@ export default function AdminProfile() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className="border-b border-slate-200/50 bg-slate-50/50 px-6 py-4 dark:border-white/10 dark:bg-white/5">
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Lock size={18} className="text-violet-500" />
+              <Lock size={18} className="text-sky-500" />
               Seguridad
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -255,13 +255,13 @@ export default function AdminProfile() {
         <div className="glass-card overflow-hidden rounded-2xl">
           <div className="border-b border-slate-200/50 bg-slate-50/50 px-6 py-4 dark:border-white/10 dark:bg-white/5">
             <h3 className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-              <Shield size={18} className="text-violet-500" />
+              <Shield size={18} className="text-sky-500" />
               Rol en el Sistema
             </h3>
           </div>
           <div className="px-6 py-5">
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
+              <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
                 {user?.rol || "Admin"}
               </span>
               <p className="text-sm text-slate-500 dark:text-slate-400">

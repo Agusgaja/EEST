@@ -64,7 +64,7 @@ export default function SettingFormModal({ isOpen, onClose, type, initialData, o
               <input
                 type="text"
                 autoFocus
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={`Ej: ${type === "Área" ? "AULA 1" : "RED"}`}
@@ -82,7 +82,7 @@ export default function SettingFormModal({ isOpen, onClose, type, initialData, o
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-violet-500/20 hover:bg-violet-500 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-sky-500/20 hover:bg-sky-500 transition-colors"
             >
               <Check size={16} />
               {isEdit ? "Guardar Cambios" : "Crear"}

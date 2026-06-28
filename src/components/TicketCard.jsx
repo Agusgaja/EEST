@@ -59,7 +59,7 @@ const TicketCard = forwardRef(function TicketCard(
           : "glass-card"
       } ${
         isExpanded && !isOverlay
-          ? "p-4 ring-1 ring-violet-500/20 dark:ring-violet-500/10"
+          ? "p-4 ring-1 ring-sky-500/20 dark:ring-sky-500/10"
           : "p-4"
       } ${isDragging ? "opacity-40" : "opacity-100"}`}
       {...dragAttributes}
@@ -84,7 +84,7 @@ const TicketCard = forwardRef(function TicketCard(
           }`}
         >
           <button
-            className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 active:scale-[0.97] dark:border-white/10 dark:bg-white/5 dark:text-slate-400 dark:hover:border-violet-500/40 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
+            className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-600 active:scale-[0.97] dark:border-white/10 dark:bg-white/5 dark:text-slate-400 dark:hover:border-sky-500/40 dark:hover:bg-sky-500/10 dark:hover:text-sky-300"
             onClick={handleCollapse}
             onMouseDown={stopDragFromControl}
             onPointerDown={stopDragFromControl}
@@ -97,7 +97,7 @@ const TicketCard = forwardRef(function TicketCard(
             <span className="sr-only">Minimizar ticket</span>
           </button>
           <span
-            className="mt-0.5 flex h-8 w-8 cursor-grab items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition-all duration-200 hover:border-violet-300 hover:text-violet-500 active:cursor-grabbing dark:border-white/10 dark:bg-white/5 dark:text-slate-500 dark:hover:border-violet-500/40 dark:hover:text-violet-300"
+            className="mt-0.5 flex h-8 w-8 cursor-grab items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition-all duration-200 hover:border-sky-300 hover:text-sky-500 active:cursor-grabbing dark:border-white/10 dark:bg-white/5 dark:text-slate-500 dark:hover:border-sky-500/40 dark:hover:text-sky-300"
             {...dragListeners}
             title="Arrastrar ticket"
           >
@@ -153,7 +153,7 @@ export default TicketCard;
 function InfoRow({ icon: Icon, value }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <Icon className="shrink-0 text-violet-400 dark:text-violet-400" size={15} aria-hidden="true" />
+      <Icon className="shrink-0 text-sky-400 dark:text-sky-400" size={15} aria-hidden="true" />
       <span className="truncate">{value}</span>
     </div>
   );

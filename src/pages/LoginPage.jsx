@@ -77,7 +77,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-700 to-red-600 text-white shadow-lg shadow-red-600/20">
               <ClipboardList size={26} aria-hidden="true" />
             </div>
             <h1 className="mt-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
@@ -106,7 +106,7 @@ export default function LoginPage() {
                     Nueva contraseña
                   </label>
                   <input
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                     type="password"
                     placeholder="••••••••"
                     value={newPassword}
@@ -119,7 +119,7 @@ export default function LoginPage() {
                     Confirmar nueva contraseña
                   </label>
                   <input
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
                     type="password"
                     placeholder="••••••••"
                     value={confirmPassword}
@@ -131,7 +131,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="mt-6 w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97]"
+                className="mt-6 w-full rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500 active:scale-[0.97]"
               >
                 Actualizar contraseña
               </button>
@@ -153,7 +153,7 @@ export default function LoginPage() {
                     Email
                   </label>
                   <input
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50"
                     placeholder="admin@industria.com"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
@@ -165,7 +165,7 @@ export default function LoginPage() {
                     Contraseña
                   </label>
                   <input
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50"
                     type="password"
                     placeholder="••••••••"
                     value={password}
@@ -177,7 +177,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="mt-6 w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97]"
+                className="mt-6 w-full rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500 active:scale-[0.97]"
               >
                 Iniciar sesion
               </button>
@@ -185,7 +185,7 @@ export default function LoginPage() {
               <div className="mt-4 flex flex-col items-center gap-3 text-sm sm:flex-row sm:justify-center">
                 <Link
                   to="/register"
-                  className="font-medium text-slate-600 underline-offset-2 transition-colors hover:text-violet-600 hover:underline dark:text-slate-400 dark:hover:text-violet-400"
+                  className="font-medium text-slate-600 underline-offset-2 transition-colors hover:text-sky-600 hover:underline dark:text-slate-400 dark:hover:text-sky-400"
                 >
                   Registrarse
                 </Link>

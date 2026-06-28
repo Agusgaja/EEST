@@ -221,7 +221,7 @@ export default function MyTicketsPage() {
                       const isTech = item.authorRole === "tecnico" || item.authorRole === "admin";
                       return (
                       <article
-                        className={`rounded-lg border p-4 ${isTech ? "border-violet-200 bg-violet-50 dark:border-violet-500/30 dark:bg-violet-500/10" : "border-slate-200 bg-white dark:border-white/10 dark:bg-white/5"}`}
+                        className={`rounded-lg border p-4 ${isTech ? "border-sky-200 bg-sky-50 dark:border-sky-500/30 dark:bg-sky-500/10" : "border-slate-200 bg-white dark:border-white/10 dark:bg-white/5"}`}
                         key={item.id}
                       >
                         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
@@ -229,7 +229,7 @@ export default function MyTicketsPage() {
                             <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                               {item.author}
                             </p>
-                            {isTech && <span className="rounded bg-violet-200 px-1.5 py-0.5 text-[10px] font-bold text-violet-800 dark:bg-violet-500/30 dark:text-violet-200">TÉCNICO</span>}
+                            {isTech && <span className="rounded bg-sky-200 px-1.5 py-0.5 text-[10px] font-bold text-sky-800 dark:bg-sky-500/30 dark:text-sky-200">TÉCNICO</span>}
                           </div>
                           <time className="text-xs text-slate-500 dark:text-slate-400">
                             {formatDate(item.createdAt ?? item.date)}
@@ -258,7 +258,7 @@ export default function MyTicketsPage() {
                 
                 <form onSubmit={handleSubmitComment} className="mt-4 flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
                   <textarea
-                    className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+                    className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
                     placeholder="Escribe un comentario..."
                     rows={3}
                     value={newComment}
@@ -267,9 +267,9 @@ export default function MyTicketsPage() {
                   {commentAttachments.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {commentAttachments.map((f, i) => (
-                        <span key={i} className="flex items-center gap-1 rounded bg-violet-100 px-2 py-1 text-xs text-violet-800 dark:bg-violet-500/20 dark:text-violet-300">
+                        <span key={i} className="flex items-center gap-1 rounded bg-sky-100 px-2 py-1 text-xs text-sky-800 dark:bg-sky-500/20 dark:text-sky-300">
                           <Paperclip size={12} /> {f.name}
-                          <button type="button" onClick={() => setCommentAttachments(p => p.filter((_, idx) => idx !== i))} className="ml-1 text-violet-500 hover:text-red-500"><X size={12}/></button>
+                          <button type="button" onClick={() => setCommentAttachments(p => p.filter((_, idx) => idx !== i))} className="ml-1 text-sky-500 hover:text-red-500"><X size={12}/></button>
                         </span>
                       ))}
                     </div>
@@ -280,7 +280,7 @@ export default function MyTicketsPage() {
                       <span>Adjuntar</span>
                       <input type="file" multiple className="hidden" onChange={handleFileChange} />
                     </label>
-                    <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500">
+                    <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500">
                       <Send size={16} />
                       Comentar
                     </button>
@@ -305,7 +305,7 @@ export default function MyTicketsPage() {
 function IconField({ icon: Icon, label, value }) {
   return (
     <div className="flex min-w-0 gap-3">
-      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400">
+      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-600/20 dark:text-sky-400">
         <Icon size={17} aria-hidden="true" />
       </div>
       <DetailField label={label} value={value} />

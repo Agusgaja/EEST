@@ -98,7 +98,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 type="text"
                 value={formData.nombre}
                 onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                className={`mt-1 block w-full rounded-lg border ${errors.nombre ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-white/5 dark:text-slate-100`}
+                className={`mt-1 block w-full rounded-lg border ${errors.nombre ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:bg-white/5 dark:text-slate-100`}
               />
               {errors.nombre && <p className="mt-1 text-xs text-red-500">{errors.nombre}</p>}
             </div>
@@ -109,7 +109,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 type="text"
                 value={formData.apellido}
                 onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
-                className={`mt-1 block w-full rounded-lg border ${errors.apellido ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-white/5 dark:text-slate-100`}
+                className={`mt-1 block w-full rounded-lg border ${errors.apellido ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:bg-white/5 dark:text-slate-100`}
               />
               {errors.apellido && <p className="mt-1 text-xs text-red-500">{errors.apellido}</p>}
             </div>
@@ -120,7 +120,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={`mt-1 block w-full rounded-lg border ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-white/5 dark:text-slate-100`}
+                className={`mt-1 block w-full rounded-lg border ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:bg-white/5 dark:text-slate-100`}
               />
               {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
             </div>
@@ -131,7 +131,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
                 type="text"
                 value={formData.telefono}
                 onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                className={`mt-1 block w-full rounded-lg border ${errors.telefono ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-white/5 dark:text-slate-100`}
+                className={`mt-1 block w-full rounded-lg border ${errors.telefono ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:bg-white/5 dark:text-slate-100`}
               />
               {errors.telefono && <p className="mt-1 text-xs text-red-500">{errors.telefono}</p>}
             </div>
@@ -141,7 +141,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
               <select
                 value={formData.rol}
                 onChange={(e) => setFormData({ ...formData, rol: e.target.value })}
-                className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+                className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               >
                 <option value="Admin">Admin</option>
                 <option value="Técnico">Técnico</option>
@@ -160,7 +160,7 @@ export default function UserFormModal({ isOpen, onClose, userToEdit }) {
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-violet-500/20 transition-colors hover:bg-violet-500"
+              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-sky-500/20 transition-colors hover:bg-sky-500"
             >
               {userToEdit ? "Guardar cambios" : "Crear usuario"}
             </button>

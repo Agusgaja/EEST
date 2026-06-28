@@ -14,7 +14,7 @@ function SettingList({ title, description, items, type, onAdd, onEdit, onToggleS
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{title}</h3>
           <button 
             onClick={() => onAdd(type)}
-            className="rounded-lg bg-violet-100 p-1.5 text-violet-600 transition-colors hover:bg-violet-200 dark:bg-violet-500/20 dark:text-violet-400 dark:hover:bg-violet-500/30"
+            className="rounded-lg bg-sky-100 p-1.5 text-sky-600 transition-colors hover:bg-sky-200 dark:bg-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500/30"
           >
             <Plus size={18} />
           </button>

@@ -33,7 +33,7 @@ function UserDetailModal({ user, onClose }) {
 
         <div className="p-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 text-2xl font-bold text-white shadow-lg">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 text-2xl font-bold text-white shadow-lg">
               {user.nombre[0]}{user.apellido[0]}
             </div>
             <div>
@@ -75,7 +75,7 @@ function UserDetailModal({ user, onClose }) {
               <ul className="max-h-32 overflow-y-auto space-y-2 pr-2">
                 {userTickets.map(t => (
                   <li key={t.id} className="flex items-center justify-between rounded-lg border border-slate-200/50 bg-slate-50/50 p-3 dark:border-white/5 dark:bg-white/5">
-                    <span className="font-medium text-violet-600 dark:text-violet-400">{t.id}</span>
+                    <span className="font-medium text-sky-600 dark:text-sky-400">{t.id}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400 truncate w-1/2 text-right">{getShortDescription(t.fullDescription)}</span>
                   </li>
                 ))}
@@ -199,7 +199,7 @@ export default function AdminUsers() {
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <button 
             onClick={handleCreate}
-            className="inline-flex items-center justify-center rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 transition-colors"
+            className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-500/20 hover:bg-sky-500 transition-colors"
           >
             Nuevo Usuario
           </button>
@@ -217,7 +217,7 @@ export default function AdminUsers() {
             placeholder="Buscar por nombre o email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+            className="block w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
           />
         </div>
         <div className="flex w-full gap-4 sm:w-auto">
@@ -228,7 +228,7 @@ export default function AdminUsers() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="block w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-8 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              className="block w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-8 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
             >
               <option value="Todos">Roles: Todos</option>
               <option value="Admin">Admin</option>
@@ -243,7 +243,7 @@ export default function AdminUsers() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="block w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-8 text-sm text-slate-900 transition-colors focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              className="block w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-8 text-sm text-slate-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
             >
               <option value="Todos">Estado: Todos</option>
               <option value="Activo">Activo</option>
@@ -306,7 +306,7 @@ export default function AdminUsers() {
                   <tr key={user.id} className="transition-colors hover:bg-slate-50/50 dark:hover:bg-white/[0.02]">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
                           {user.nombre[0]}{user.apellido[0]}
                         </div>
                         <div>
@@ -322,7 +322,7 @@ export default function AdminUsers() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex rounded-md px-2 py-1 text-xs font-medium ${
-                        user.rol === 'Admin' ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' :
+                        user.rol === 'Admin' ? 'bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300' :
                         user.rol === 'Técnico' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' :
                         'bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300'
                       }`}>

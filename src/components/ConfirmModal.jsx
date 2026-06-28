@@ -12,7 +12,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
       >
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${isDanger ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400' : 'bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400'}`}>
+            <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${isDanger ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400' : 'bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400'}`}>
               <AlertTriangle size={20} />
             </div>
             <div>
@@ -36,7 +36,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
               className={`rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors ${
                 isDanger 
                   ? 'bg-red-600 hover:bg-red-500 shadow-red-500/20' 
-                  : 'bg-violet-600 hover:bg-violet-500 shadow-violet-500/20'
+                  : 'bg-sky-600 hover:bg-sky-500 shadow-sky-500/20'
               }`}
             >
               {confirmText}

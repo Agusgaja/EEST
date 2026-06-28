@@ -105,7 +105,7 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => window.open("/admin/report", "_blank")}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition-all hover:bg-violet-500 active:scale-[0.97]"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-sky-500/20 transition-all hover:bg-sky-500 active:scale-[0.97]"
           >
             <Printer size={16} />
             <span className="hidden sm:inline">Generar Reporte</span>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
           title="Usuarios"
           value={activeUsersCount}
           icon={Users}
-          colorClass="bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400"
+          colorClass="bg-sky-50 text-sky-600 dark:bg-sky-500/10 dark:text-sky-400"
         />
       </div>
 

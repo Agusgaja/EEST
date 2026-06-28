@@ -90,7 +90,7 @@ export default function CreateTicketPage() {
               Título del problema
             </label>
             <input
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50"
               placeholder="Ej: Problema con luminaria..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -102,7 +102,7 @@ export default function CreateTicketPage() {
               Área
             </label>
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               value={area}
               onChange={(e) => setArea(e.target.value)}
             >
@@ -120,7 +120,7 @@ export default function CreateTicketPage() {
               Motivo
             </label>
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
             >
@@ -138,7 +138,7 @@ export default function CreateTicketPage() {
               Descripción
             </label>
             <textarea
-              className="min-h-32 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-violet-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500/50"
+              className="min-h-32 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50"
               placeholder="Describa el problema o solicitud..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -153,7 +153,7 @@ export default function CreateTicketPage() {
               type="file"
               multiple
               onChange={handleFileChange}
-              className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100 dark:text-slate-400 dark:file:bg-violet-500/10 dark:file:text-violet-400 dark:hover:file:bg-violet-500/20"
+              className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-sky-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-700 hover:file:bg-sky-100 dark:text-slate-400 dark:file:bg-sky-500/10 dark:file:text-sky-400 dark:hover:file:bg-sky-500/20"
             />
             {attachments.length > 0 && (
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -174,7 +174,7 @@ export default function CreateTicketPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-violet-600 px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-violet-500 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-sky-600 px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-sky-500 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <SendHorizonal size={17} aria-hidden="true" />
             Crear ticket

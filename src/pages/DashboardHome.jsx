@@ -46,7 +46,7 @@ export default function DashboardHome() {
           to="/dashboard/create-ticket"
           className="glass-card flex items-center gap-4 rounded-xl p-5"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-600/20 dark:text-sky-400">
             <FilePlus size={24} aria-hidden="true" />
           </div>
           <div>
@@ -60,7 +60,7 @@ export default function DashboardHome() {
           to="/dashboard/my-tickets"
           className="glass-card flex items-center gap-4 rounded-xl p-5"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-600/20 dark:text-violet-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-600/20 dark:text-sky-400">
             <LayoutList size={24} aria-hidden="true" />
           </div>
           <div>

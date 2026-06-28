@@ -93,7 +93,7 @@ export default function MetricsPanel({ tickets, statuses, onClose }) {
       <div className="glass-panel animate-slide-in-right flex h-full w-full max-w-2xl flex-col overflow-hidden sm:my-4 sm:h-[calc(100vh-2rem)] sm:rounded-xl">
         <div className="flex items-center justify-between gap-4 border-b border-slate-200/80 px-6 py-5 dark:border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/10 text-violet-500 dark:bg-violet-500/20 dark:text-violet-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/10 text-sky-500 dark:bg-sky-500/20 dark:text-sky-400">
               <TrendingUp size={18} aria-hidden="true" />
             </div>
             <div>
