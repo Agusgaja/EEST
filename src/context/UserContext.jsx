@@ -149,12 +149,24 @@ export function UserProvider({ children }) {
     // Generar contraseña temporal segura
     const tempPassword = Math.random().toString(36).slice(-8) + "Aa1@";
     
-    // Forzar el cambio de contraseña usando privilegios de administrador
+    // Forzar el cambio de contraseña y confirmar el email automáticamente
     const { error } = await supabaseAdmin.auth.admin.updateUserById(id, { 
-      password: tempPassword 
+      password: tempPassword,
+      email_confirm: true 
     });
     
     if (error) throw new Error(error.message);
+
+    // Setear flags de contraseña temporal en la base de datos
+    const { error: dbError } = await supabaseAdmin
+      .from('users')
+      .update({
+        isTempPassword: true,
+        tempPasswordCreatedAt: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (dbError) throw new Error("Error al configurar la bandera de contraseña temporal: " + dbError.message);
     
     return tempPassword;
   }, []);
