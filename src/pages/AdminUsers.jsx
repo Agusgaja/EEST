@@ -1,5 +1,4 @@
 import { Edit, Eye, KeyRound, Power, PowerOff, X, Search, Filter } from "lucide-react";
-import { Edit, Eye, KeyRound, Power, PowerOff, X, Search, Filter } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useTickets } from "../context/TicketContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
