@@ -1,4 +1,4 @@
-import { SendHorizonal } from "lucide-react";
+import { SendHorizonal, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
