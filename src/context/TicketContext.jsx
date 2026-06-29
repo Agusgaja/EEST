@@ -271,16 +271,20 @@ export function TicketProvider({ children }) {
       createdAt: now,
     };
 
-    const { error } = await supabase.from('tickets').update({
+    const updates = {
       title: title?.trim() ?? "Sin título",
       area,
       motivo,
       "fullDescription": fullDescription.trim(),
       attachments: attachments || [],
       history: [...ticket.history, newHistoryEntry]
-    }).eq('id', ticketId);
+    };
 
+    const { error } = await supabase.from('tickets').update(updates).eq('id', ticketId);
     if (error) throw new Error(error.message);
+
+    // Actualización optimista
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updates } : t));
   }, [tickets]);
 
   const confirmTicket = useCallback(async (ticketId, actor, actorId) => {
@@ -291,7 +295,7 @@ export function TicketProvider({ children }) {
     const newLabel = TICKET_STATUSES.find((s) => s.id === "cerrado")?.label ?? "Cerrado";
     const now = new Date().toISOString();
 
-    const { error } = await supabase.from('tickets').update({
+    const updates = {
       status: "cerrado",
       "closedAt": now,
       history: [
@@ -313,9 +317,13 @@ export function TicketProvider({ children }) {
           createdAt: now,
         },
       ]
-    }).eq('id', ticketId);
+    };
 
+    const { error } = await supabase.from('tickets').update(updates).eq('id', ticketId);
     if (error) throw new Error(error.message);
+
+    // Actualización optimista
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updates } : t));
   }, [tickets]);
 
   const deleteTicket = useCallback(async (ticketId, actor, actorId) => {
@@ -332,15 +340,20 @@ export function TicketProvider({ children }) {
       createdAt: now,
     };
 
+    const updates = {
+      deleted_at: now,
+      history: [...ticket.history, newHistoryEntry]
+    };
+
     const { error } = await supabase
       .from('tickets')
-      .update({
-        deleted_at: now,
-        history: [...ticket.history, newHistoryEntry]
-      })
+      .update(updates)
       .eq('id', ticketId);
 
     if (error) throw new Error(error.message);
+
+    // Actualización optimista
+    setTickets(prev => prev.filter(t => t.id !== ticketId));
   }, [tickets]);
 
   return (
