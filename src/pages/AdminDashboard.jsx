@@ -162,29 +162,33 @@ export default function AdminDashboard() {
             <BarChart3 className="text-slate-400" size={20} />
           </div>
           <div className="flex flex-1 items-center justify-center pt-6">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={statusData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === "dark" ? "#334155" : "#e2e8f0"} />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: theme === "dark" ? "#94a3b8" : "#64748b", fontSize: 12 }} 
-                  dy={10}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: theme === "dark" ? "#94a3b8" : "#64748b", fontSize: 12 }} 
-                  allowDecimals={false}
-                />
-                <Tooltip 
-                  cursor={{ fill: theme === "dark" ? "#334155" : "#f1f5f9" }} 
-                  contentStyle={tooltipStyle}
-                />
-                <Bar dataKey="tickets" fill="#8b5cf6" radius={[4, 4, 0, 0]} barSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
+            {tickets.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={statusData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === "dark" ? "#334155" : "#e2e8f0"} />
+                  <XAxis 
+                    dataKey="name" 
+                    tick={{ fill: theme === "dark" ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    dy={10}
+                  />
+                  <YAxis 
+                    tick={{ fill: theme === "dark" ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: theme === "dark" ? "#334155" : "#f1f5f9" }}
+                    contentStyle={tooltipStyle}
+                  />
+                  <Bar dataKey="tickets" fill="#0ea5e9" radius={[4, 4, 0, 0]} barSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center text-slate-500 italic">No hay tickets registrados.</div>
+            )}
           </div>
         </div>
 
@@ -196,31 +200,35 @@ export default function AdminDashboard() {
             <PieChartIcon className="text-slate-400" size={20} />
           </div>
           <div className="flex flex-1 items-center justify-center pt-6">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={areaData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {areaData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={tooltipStyle} />
-                <Legend 
-                  verticalAlign="bottom" 
-                  height={36} 
-                  iconType="circle"
-                  formatter={(value) => <span style={{ color: theme === "dark" ? "#cbd5e1" : "#475569" }}>{value}</span>}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {areaData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={areaData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {areaData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36} 
+                    iconType="circle"
+                    formatter={(value) => <span className="text-sm text-slate-600 dark:text-slate-400">{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center text-slate-500 italic">No hay tickets registrados.</div>
+            )}
           </div>
         </div>
       </div>
