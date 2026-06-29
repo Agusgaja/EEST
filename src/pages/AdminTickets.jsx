@@ -215,10 +215,18 @@ export default function AdminTickets() {
     const sourceContainer = sourceContainerBeforeDragRef.current;
 
     setActiveTicketId(null);
+    const prevColumns = columnsBeforeDragRef.current;
     columnsBeforeDragRef.current = null;
     sourceContainerBeforeDragRef.current = null;
 
     if (!overId || !activeContainer || !overContainer) return;
+
+    const ticket = ticketsById.get(activeId);
+    if (ticket && activeContainer === "asignado" && !ticket.assignedTo) {
+      alert("Debes abrir el ticket y asignarle un técnico antes de moverlo a esta columna.");
+      if (prevColumns) setColumns(prevColumns);
+      return;
+    }
 
     if (activeContainer === overContainer && activeId !== overId && !statusIds.includes(overId)) {
       setColumns((currentColumns) => {

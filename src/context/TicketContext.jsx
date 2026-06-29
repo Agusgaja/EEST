@@ -49,6 +49,7 @@ export function TicketProvider({ children }) {
       priority: "media",
       "createdAt": now,
       "userSnapshot": userSnapshot,
+      "userId": userId,
       observations: [],
       history: [
         {
@@ -89,6 +90,7 @@ export function TicketProvider({ children }) {
       history: [...ticket.history, newHistoryEntry]
     };
 
+    if (newStatusId === "pendiente") updates.assignedTo = null;
     if (newStatusId === "resuelto-pendiente") updates.resolvedAt = now;
     if (newStatusId === "cerrado") updates.closedAt = now;
 
