@@ -12,9 +12,15 @@ export function UserProvider({ children }) {
       .from('users')
       .select('*')
       .is('deleted_at', null)
-      .order('fechaRegistro', { ascending: false });
+      .order('fecharegistro', { ascending: false }); // Supabase guarda columnas en minúsculas
+      
+    console.log("[DEBUG fetchUsers] Data:", data);
+    console.log("[DEBUG fetchUsers] Error:", error);
+
     if (!error && data) {
       setUsers(data);
+    } else {
+      console.error("[DEBUG fetchUsers] Falló la carga:", error);
     }
     setLoading(false);
   };
