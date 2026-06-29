@@ -7,7 +7,6 @@ import { useToast } from "../context/ToastContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import UserFormModal from "../components/UserFormModal.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
-import PasswordModal from "../components/PasswordModal.jsx";
 import { getShortDescription } from "../utils/ticketUtils.js";
 
 function UserDetailModal({ user, onClose }) {
@@ -108,11 +107,6 @@ export default function AdminUsers() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState({});
 
-  // Password Modal
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [generatedPassword, setGeneratedPassword] = useState("");
-  const [passwordUserName, setPasswordUserName] = useState("");
-
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
       const normalizeStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, ' ').trim() : "";
@@ -176,10 +170,8 @@ export default function AdminUsers() {
       isDanger: false,
       onConfirm: async () => {
         try {
-          const newPass = await resetUserPassword(user.id, user.email);
-          setGeneratedPassword(newPass);
-          setPasswordUserName(`${user.nombre} ${user.apellido}`);
-          setIsPasswordModalOpen(true);
+          await resetUserPassword(user.id, user.email);
+          showToast(`Se ha enviado un correo a ${user.email} con las instrucciones para reestablecer la contraseña`, "success");
         } catch (error) {
           showToast(error.message || "Error al intentar reestablecer la contraseña", "error");
         }
@@ -399,14 +391,11 @@ export default function AdminUsers() {
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
-        {...confirmConfig}
-      />
-      
-      <PasswordModal 
-        isOpen={isPasswordModalOpen}
-        onClose={() => setIsPasswordModalOpen(false)}
-        password={generatedPassword}
-        userName={passwordUserName}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.onConfirm}
+        confirmText={confirmConfig.confirmText}
+        isDanger={confirmConfig.isDanger}
       />
     </div>
   );
