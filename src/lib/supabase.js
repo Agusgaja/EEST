@@ -14,7 +14,7 @@ export const supabaseSecondary = createClient(supabaseUrl, supabaseKey, {
 });
 
 // Cliente Admin (Service Role) - Exclusivo para reestablecer contraseñas desde el frontend (Solo para la demo)
-const serviceRoleKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheHNuemt0dnh5c2JsZ2t4eWt0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDc5MDMwMCwiZXhwIjoyMDk2MzY2MzAwfQ.IpcI-C7PHe56s96Z57z6D3qS3Unp6m9vqCf0CtMWdPE';
+const serviceRoleKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrdHhua2xqd3J6amR2dXBweGxwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjY3Nzc0NywiZXhwIjoyMDk4MjUzNzQ3fQ.H6Fa9n_p53Vahx-LiAq8Hi0zp-0pPD-4y9MvpRUofAs';
 export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
   auth: {
     autoRefreshToken: false,
