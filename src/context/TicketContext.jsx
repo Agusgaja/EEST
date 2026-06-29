@@ -96,7 +96,7 @@ export function TicketProvider({ children }) {
 
     const updates = {
       status: newStatusId,
-      history: [...ticket.history, newHistoryEntry]
+      history: [...(ticket.history || []), newHistoryEntry]
     };
 
     if (newStatusId === "pendiente") updates.assignedTo = null;
@@ -105,6 +105,9 @@ export function TicketProvider({ children }) {
 
     const { error } = await supabase.from('tickets').update(updates).eq('id', ticketId);
     if (error) throw new Error(error.message);
+    
+    // Actualización optimista
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updates } : t));
   }, [tickets]);
 
   const addObservation = useCallback(async (ticketId, text, author, authorId, authorRole, attachments = []) => {
@@ -132,12 +135,17 @@ export function TicketProvider({ children }) {
       createdAt: now,
     };
 
-    const { error } = await supabase.from('tickets').update({
-      observations: [...ticket.observations, newObservation],
-      history: [...ticket.history, newHistoryEntry]
-    }).eq('id', ticketId);
+    const updates = {
+      observations: [...(ticket.observations || []), newObservation],
+      history: [...(ticket.history || []), newHistoryEntry]
+    };
+
+    const { error } = await supabase.from('tickets').update(updates).eq('id', ticketId);
 
     if (error) throw new Error(error.message);
+    
+    // Actualización optimista
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updates } : t));
   }, [tickets]);
 
   const assignTicket = useCallback(async (ticketId, technicianId, technicianName, actor, actorId) => {
@@ -148,7 +156,7 @@ export function TicketProvider({ children }) {
     const wasPendiente = ticket.status === "pendiente";
     const newStatus = wasPendiente ? "asignado" : ticket.status;
     
-    let historyEntries = [...ticket.history];
+    let historyEntries = [...(ticket.history || [])];
     if (wasPendiente) {
       const prevLabel = TICKET_STATUSES.find((s) => s.id === ticket.status)?.label ?? ticket.status;
       const newLabel = TICKET_STATUSES.find((s) => s.id === "asignado")?.label ?? "Asignado";
@@ -164,20 +172,24 @@ export function TicketProvider({ children }) {
     
     historyEntries.push({
       id: `hist-${Date.now()}-assign`,
-      action: `Asignado a ${technicianName}`,
-      detail: "Técnico asignado al ticket.",
+      action: "Asignación actualizada",
+      detail: `Ticket asignado a ${technicianName}.`,
       actor: actor ?? "Sistema",
       actorId: actorId ?? "system",
       createdAt: now,
     });
 
-    const { error } = await supabase.from('tickets').update({
-      status: newStatus,
+    const updates = {
       "assignedTo": { id: technicianId, name: technicianName },
+      status: newStatus,
       history: historyEntries
-    }).eq('id', ticketId);
+    };
 
+    const { error } = await supabase.from('tickets').update(updates).eq('id', ticketId);
     if (error) throw new Error(error.message);
+    
+    // Actualización optimista
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updates } : t));
   }, [tickets]);
 
   const editTicket = useCallback(async (ticketId, { title, area, motivo, fullDescription, attachments }, actor, actorId) => {
