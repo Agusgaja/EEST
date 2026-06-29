@@ -64,8 +64,17 @@ export function TicketProvider({ children }) {
       // No incluimos ID para que Supabase lo autogenere
     };
 
-    const { error } = await supabase.from('tickets').insert([newTicket]);
+    const { data: inserted, error } = await supabase
+      .from('tickets')
+      .insert([newTicket])
+      .select()
+      .single();
+
     if (error) throw new Error(error.message);
+
+    // Actualización optimista: agregar al estado local inmediatamente
+    // sin esperar el evento realtime para que aparezca al instante en "Mis Tickets"
+    setTickets((prev) => [inserted, ...prev]);
   }, []);
 
   const changeStatus = useCallback(async (ticketId, newStatusId, actor, actorId) => {
