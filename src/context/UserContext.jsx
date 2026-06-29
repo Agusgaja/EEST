@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { supabase, supabaseSecondary } from "../lib/supabase.js";
+import { supabase, supabaseSecondary, supabaseAdmin } from "../lib/supabase.js";
 
 const UserContext = createContext();
 
@@ -12,15 +12,12 @@ export function UserProvider({ children }) {
       .from('users')
       .select('*')
       .is('deleted_at', null)
-      .order('fecharegistro', { ascending: false }); // Supabase guarda columnas en minúsculas
+      .order('fecharegistro', { ascending: false }); 
       
-    console.log("[DEBUG fetchUsers] Data:", data);
-    console.log("[DEBUG fetchUsers] Error:", error);
-
     if (!error && data) {
       setUsers(data);
     } else {
-      console.error("[DEBUG fetchUsers] Falló la carga:", error);
+      console.error("Falló la carga:", error);
     }
     setLoading(false);
   };
@@ -149,14 +146,17 @@ export function UserProvider({ children }) {
   }, [users]);
 
   const resetUserPassword = useCallback(async (id, email) => {
-    // Usamos Supabase native reset password flow
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/login',
+    // Generar contraseña temporal segura
+    const tempPassword = Math.random().toString(36).slice(-8) + "Aa1@";
+    
+    // Forzar el cambio de contraseña usando privilegios de administrador
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(id, { 
+      password: tempPassword 
     });
+    
     if (error) throw new Error(error.message);
     
-    // Solo como indicador visual en la UI
-    return "Revise su correo electrónico";
+    return tempPassword;
   }, []);
 
   const completePasswordChange = useCallback(async (id, newPassword) => {
