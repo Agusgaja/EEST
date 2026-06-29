@@ -174,11 +174,15 @@ export default function AdminUsers() {
       message: `¿Estás seguro que deseas restablecer la contraseña de ${user.nombre} ${user.apellido}? Se generará una nueva contraseña temporal.`,
       confirmText: "Restablecer",
       isDanger: false,
-      onConfirm: () => {
-        const newPass = resetUserPassword(user.id);
-        setGeneratedPassword(newPass);
-        setPasswordUserName(`${user.nombre} ${user.apellido}`);
-        setIsPasswordModalOpen(true);
+      onConfirm: async () => {
+        try {
+          const newPass = await resetUserPassword(user.id, user.email);
+          setGeneratedPassword(newPass);
+          setPasswordUserName(`${user.nombre} ${user.apellido}`);
+          setIsPasswordModalOpen(true);
+        } catch (error) {
+          showToast(error.message || "Error al intentar reestablecer la contraseña", "error");
+        }
       }
     });
     setIsConfirmModalOpen(true);
