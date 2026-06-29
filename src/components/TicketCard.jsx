@@ -72,10 +72,10 @@ const TicketCard = forwardRef(function TicketCard(
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold leading-5 text-slate-900 dark:text-slate-50">
-            {ticket.title ?? ticket.id}
+            {ticket.title || ticket.motivo || "Sin título"}
           </p>
           <p className="truncate text-xs leading-5 text-slate-500 dark:text-slate-400">
-            {ticket.id} &middot; {ticket.userSnapshot?.name ?? ticket.user ?? "—"}
+            {ticket.area || "Sin área"} &middot; {ticket.userSnapshot?.name ?? ticket.user ?? "—"}
           </p>
         </div>
         <div
