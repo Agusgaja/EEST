@@ -38,8 +38,35 @@ export function TicketProvider({ children }) {
   const addTicket = useCallback(async ({ title, area, motivo, fullDescription, attachments, userId, userSnapshot, source }) => {
     const now = new Date().toISOString();
     
-    // No necesitamos generar id manualmente (MT-xxx), usaremos el UUID generado por Supabase.
-    // Opcionalmente podemos mantener la lógica si preferimos IDs cortos, pero UUID es más seguro para MVP.
+    // 1. Subir archivos a Supabase Storage
+    const uploadedAttachments = [];
+    if (attachments && attachments.length > 0) {
+      for (const fileObj of attachments) {
+        if (fileObj.file) { // if we pass the actual File object
+          const fileExt = fileObj.file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const filePath = `tickets/${userId}/${fileName}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('ticket-attachments')
+            .upload(filePath, fileObj.file);
+            
+          if (!uploadError && uploadData) {
+            const { data: publicUrlData } = supabase.storage
+              .from('ticket-attachments')
+              .getPublicUrl(filePath);
+              
+            uploadedAttachments.push({
+              name: fileObj.name,
+              size: fileObj.size,
+              type: fileObj.type,
+              url: publicUrlData.publicUrl
+            });
+          }
+        }
+      }
+    }
+
     const newTicket = {
       title: title?.trim() ?? "Sin título",
       "fullDescription": fullDescription.trim(),
@@ -50,6 +77,7 @@ export function TicketProvider({ children }) {
       "createdAt": now,
       "userSnapshot": userSnapshot,
       "userId": userId,
+      attachments: uploadedAttachments,
       observations: [],
       history: [
         {
@@ -116,13 +144,40 @@ export function TicketProvider({ children }) {
 
     const now = new Date().toISOString();
 
+    // 1. Subir archivos a Supabase Storage
+    const uploadedAttachments = [];
+    if (attachments && attachments.length > 0) {
+      for (const fileObj of attachments) {
+        if (fileObj.file) { // if we pass the actual File object
+          const fileExt = fileObj.file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const filePath = `comments/${ticketId}/${fileName}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('ticket-attachments')
+            .upload(filePath, fileObj.file);
+            
+          if (!uploadError && uploadData) {
+            const { data: publicUrlData } = supabase.storage
+              .from('ticket-attachments')
+              .getPublicUrl(filePath);
+              
+            uploadedAttachments.push({
+              name: fileObj.name,
+              url: publicUrlData.publicUrl
+            });
+          }
+        }
+      }
+    }
+
     const newObservation = {
       id: `obs-${Date.now()}`,
       author: author ?? "Sistema",
       authorId: authorId ?? "system",
       authorRole: authorRole ?? "usuario",
       text,
-      attachments,
+      attachments: uploadedAttachments,
       createdAt: now,
     };
 

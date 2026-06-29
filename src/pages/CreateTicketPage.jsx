@@ -28,7 +28,8 @@ export default function CreateTicketPage() {
       name: f.name,
       size: f.size,
       type: f.type,
-      url: URL.createObjectURL(f)
+      url: URL.createObjectURL(f),
+      file: f // Guardamos el File real para subirlo después
     }));
     setAttachments(prev => [...prev, ...newFiles]);
   }

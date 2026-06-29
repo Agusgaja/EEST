@@ -26,7 +26,7 @@ export default function TecnicoTicketPanel({ ticket, onClose }) {
   
   function handleFileChange(e) {
     if (!e.target.files) return;
-    const newFiles = Array.from(e.target.files).map(f => ({ name: f.name, url: URL.createObjectURL(f) }));
+    const newFiles = Array.from(e.target.files).map(f => ({ name: f.name, url: URL.createObjectURL(f), file: f }));
     setCommentAttachments(prev => [...prev, ...newFiles]);
   }
   const [isClosing, setIsClosing] = useState(false);
@@ -112,9 +112,9 @@ export default function TecnicoTicketPanel({ ticket, onClose }) {
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Archivos adjuntos</p>
                 <div className="flex flex-wrap gap-2">
                   {ticket.attachments.map((file, idx) => (
-                    <span key={idx} className="flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                    <a key={idx} href={file.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-200 transition-colors dark:bg-white/10 dark:text-slate-300 dark:hover:bg-white/20">
                       <Paperclip size={14} /> {file.name}
-                    </span>
+                    </a>
                   ))}
                 </div>
               </div>
@@ -232,9 +232,9 @@ export default function TecnicoTicketPanel({ ticket, onClose }) {
                     {item.attachments?.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {item.attachments.map((file, idx) => (
-                          <span key={idx} className="flex items-center gap-1 rounded bg-black/5 px-2 py-1 text-xs text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                          <a key={idx} href={file.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 rounded bg-black/5 px-2 py-1 text-xs text-slate-600 hover:bg-black/10 transition-colors dark:bg-white/10 dark:text-slate-300 dark:hover:bg-white/20">
                             <Paperclip size={12} /> {file.name}
-                          </span>
+                          </a>
                         ))}
                       </div>
                     )}
