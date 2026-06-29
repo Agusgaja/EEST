@@ -49,14 +49,15 @@ export default function ProfilePage() {
     setContactErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
+    setSavingContact(true);
     try {
-      // 1. Actualiza en la lista persistida de UserContext
       await updateUserProfile(user.id, { email, telefono });
-      // 2. Actualiza reactivamente el objeto de sesión de AuthContext
       updateSession({ email, telefono });
       showToast("Datos de contacto actualizados correctamente.", "success");
     } catch (err) {
       showToast(err.message, "error");
+    } finally {
+      setSavingContact(false);
     }
   }
 
@@ -74,6 +75,7 @@ export default function ProfilePage() {
     setPasswordErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
+    setSavingPassword(true);
     try {
       await updateUserProfile(user.id, { email: user.email, telefono: user.telefono, password: newPassword });
       setCurrentPassword("");
@@ -82,6 +84,8 @@ export default function ProfilePage() {
       showToast("Contraseña actualizada correctamente.", "success");
     } catch (err) {
       showToast(err.message, "error");
+    } finally {
+      setSavingPassword(false);
     }
   }
 

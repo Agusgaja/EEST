@@ -67,6 +67,8 @@ export function UserProvider({ children }) {
     // Si queremos actualizar el legajo/area u otro campo que no va en raw_meta_data, 
     // lo hacemos con un update a la tabla users después de que el trigger la haya creado.
     if (userData.legajo || userData.area || userData.estado) {
+      // Pequeña espera para que el trigger on_auth_user_created haya insertado la fila
+      await new Promise(resolve => setTimeout(resolve, 800));
       await supabase.from('users').update({
         legajo: userData.legajo,
         area: userData.area,
@@ -74,7 +76,7 @@ export function UserProvider({ children }) {
       }).eq('id', data.user.id);
     }
     
-    fetchUsers();
+    await fetchUsers();
   }, []);
 
   const updateUser = useCallback(async (id, userData) => {
@@ -137,6 +139,7 @@ export function UserProvider({ children }) {
     const newEstado = userToUpdate.estado === "Activo" ? "Inactivo" : "Activo";
     const { error } = await supabase.from('users').update({ estado: newEstado }).eq('id', id);
     if (error) throw new Error(error.message);
+    await fetchUsers();
   }, [users]);
 
   const resetUserPassword = useCallback(async (id, email) => {

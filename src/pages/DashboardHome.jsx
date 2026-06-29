@@ -6,9 +6,9 @@ import { useTickets } from "../context/TicketContext.jsx";
 export default function DashboardHome() {
   const { user } = useAuth();
   const { tickets } = useTickets();
-  // Filtro por userId (seguro). Fallback por nombre para compatibilidad con datos legacy.
+  // Filtro por userId (seguro). Fallback por nombre (userSnapshot) para compatibilidad con datos del seed.
   const myTickets = tickets.filter((t) =>
-    t.userId ? t.userId === user.id : `${user.nombre} ${user.apellido}` === t.user,
+    t.userId ? t.userId === user.id : t.userSnapshot?.name === `${user.nombre} ${user.apellido}`,
   );
   const activeTickets = myTickets.filter((t) => t.status !== "cerrado");
   const closedTickets = myTickets.filter((t) => t.status === "cerrado");
