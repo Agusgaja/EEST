@@ -154,7 +154,7 @@ export default function LoginPage() {
                   </label>
                   <input
                     className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-sky-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-sky-500/50"
-                    placeholder="admin@industria.com"
+                    placeholder="admin@gmail.com"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
@@ -193,8 +193,10 @@ export default function LoginPage() {
             </form>
           )}
 
-          <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">
-            Admin: admin@industria.com / admin123 &middot; Usuario: c.medina@industria.com / usuario123
+          <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+            Admin: admin@gmail.com / admin123456<br />
+            Técnico: tecnico@gmail.com / tecnico123456<br />
+            Docente: docente@gmail.com / docente123456
           </p>
         </div>
       </div>
