@@ -51,6 +51,11 @@ export function TicketProvider({ children }) {
             .from('ticket-attachments')
             .upload(filePath, fileObj.file);
             
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            alert("Error al subir archivo: " + uploadError.message);
+          }
+            
           if (!uploadError && uploadData) {
             const { data: publicUrlData } = supabase.storage
               .from('ticket-attachments')
@@ -156,6 +161,11 @@ export function TicketProvider({ children }) {
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('ticket-attachments')
             .upload(filePath, fileObj.file);
+            
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            alert("Error al subir archivo adjunto del comentario: " + uploadError.message);
+          }
             
           if (!uploadError && uploadData) {
             const { data: publicUrlData } = supabase.storage
