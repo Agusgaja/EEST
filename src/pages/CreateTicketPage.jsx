@@ -37,7 +37,7 @@ export default function CreateTicketPage() {
     setAttachments(prev => prev.filter((_, i) => i !== index));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     if (isSubmitting) return;
     setError("");
@@ -49,21 +49,25 @@ export default function CreateTicketPage() {
 
     setIsSubmitting(true);
 
-    // El contexto se encarga de construir el objeto completo y generar el ID.
-    addTicket({
-      title: title.trim(),
-      area: area.trim(),
-      motivo: motivo.trim(),
-      fullDescription: description.trim(),
-      attachments,
-      userId: user.id,
-      userSnapshot: {
-        name: `${user.nombre} ${user.apellido}`
-      },
-      source: "web",
-    });
+    try {
+      await addTicket({
+        title: title.trim(),
+        area: area.trim(),
+        motivo: motivo.trim(),
+        fullDescription: description.trim(),
+        attachments,
+        userId: user.id,
+        userSnapshot: {
+          name: `${user.nombre} ${user.apellido}`
+        },
+        source: "web",
+      });
 
-    navigate("/dashboard/my-tickets");
+      navigate("/dashboard/my-tickets");
+    } catch (err) {
+      setError(`Error al crear el ticket: ${err.message}`);
+      setIsSubmitting(false);
+    }
   }
 
   return (

@@ -40,9 +40,9 @@ export default function MyTicketsPage() {
     setCommentAttachments([]);
   }
 
-  // Filtro por userId (referencia segura). Fallback: comparación por nombre para tickets legacy.
+  // Filtro por userId (referencia segura). Fallback: comparación por nombre para tickets legacy del seed.
   const myTickets = tickets.filter((t) =>
-    t.userId ? t.userId === user.id : `${user.nombre} ${user.apellido}` === t.user,
+    t.userId ? t.userId === user.id : t.userSnapshot?.name === `${user.nombre} ${user.apellido}`,
   );
 
   const detailTicket = detailTicketId
