@@ -92,11 +92,11 @@ export default function TicketDetailPanel({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
-                {ticket.title ?? ticket.id}
+                {ticket.title || ticket.motivo || "Sin título"}
               </p>
               <StatusBadge status={currentStatus} />
             </div>
-            <p className="mt-1 truncate text-xs text-slate-500">{ticket.id}</p>
+            <p className="mt-1 truncate text-xs text-slate-500">{ticket.area || "Sin área"}</p>
             <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
               {getShortDescription(ticket.fullDescription)}
             </p>

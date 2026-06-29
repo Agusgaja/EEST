@@ -90,11 +90,11 @@ export default function MyTicketsPage() {
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                      {ticket.title ?? ticket.id}
+                      {ticket.title || ticket.motivo || "Sin título"}
                     </span>
                     <StatusBadge status={status} />
                   </div>
-                  <span className="text-xs text-slate-500">{ticket.id}</span>
+                  <span className="text-xs text-slate-500">{ticket.area || "Sin área"}</span>
                   <p className="line-clamp-1 text-sm text-slate-600 dark:text-slate-300">
                     {getShortDescription(ticket.fullDescription)}
                   </p>

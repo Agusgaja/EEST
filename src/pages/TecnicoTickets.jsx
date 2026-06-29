@@ -91,12 +91,12 @@ export default function TecnicoTickets() {
                 <div className="flex w-full items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                      {ticket.id}
+                      {ticket.title || ticket.motivo || "Sin título"}
                     </span>
                     <StatusBadge status={status} />
                   </div>
                   <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {formatDate(ticket.createdAt)}
+                    {ticket.area || "Sin área"} &middot; {formatDate(ticket.createdAt)}
                   </span>
                 </div>
                 
